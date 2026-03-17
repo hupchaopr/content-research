@@ -251,7 +251,7 @@ async function doSearch() {
   try {
     const res = await fetch("crh-proxyresearch.hupchaopr.workers.dev", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": state.apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 3000,
