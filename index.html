@@ -4,477 +4,273 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Content Research Hub</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='28' font-size='28'>🔍</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --card: rgba(255,255,255,0.04);
-    --card-hover: rgba(255,255,255,0.07);
-    --border: rgba(255,255,255,0.08);
-    --text: #f0f0f0;
-    --text-dim: rgba(255,255,255,0.5);
-    --text-muted: rgba(255,255,255,0.3);
-    --accent-celeb: #ff2d55;
-    --accent-story: #af52de;
-    --accent-tv: #ff9500;
-    --blue: #1877f2;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
-  .container { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
-  
-  /* Header */
-  .header { text-align: center; margin-bottom: 28px; }
-  .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; font-family: monospace; margin-bottom: 12px; }
-  .header h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; font-family: 'Playfair Display', Georgia, serif; background: linear-gradient(135deg, #fff, rgba(255,255,255,0.55)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; margin-bottom: 4px; }
-  .header p { color: var(--text-muted); font-size: 11px; font-family: monospace; }
-
-  /* API Key */
-  .api-section { text-align: center; margin-bottom: 20px; }
-  .api-toggle { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; color: var(--text-dim); font-size: 11px; cursor: pointer; font-family: monospace; transition: all 0.2s; }
-  .api-toggle:hover { background: rgba(255,255,255,0.08); }
-  .api-input-wrap { margin-top: 8px; display: flex; gap: 8px; justify-content: center; align-items: center; }
-  .api-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 14px; color: var(--text); font-size: 12px; font-family: monospace; width: 340px; outline: none; }
-  .api-input:focus { border-color: rgba(255,255,255,0.25); }
-  .api-save { background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.3); border-radius: 8px; padding: 8px 16px; color: #34c759; font-size: 12px; font-weight: 700; cursor: pointer; }
-  .api-status { font-size: 10px; color: #34c759; margin-top: 4px; font-family: monospace; }
-  .api-cost { font-size: 10px; color: var(--text-muted); margin-top: 6px; font-family: monospace; }
-
-  /* Pillars */
-  .pillars { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
-  .pillar-btn { display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-  .pillar-btn.active { color: #fff; font-weight: 700; }
-  .pillar-btn .icon { font-size: 18px; }
-  .pillar-btn .sub { font-size: 9px; opacity: 0.5; font-family: monospace; }
-
-  /* Country */
-  .country-wrap { display: flex; justify-content: center; margin-bottom: 12px; position: relative; }
-  .country-btn { display: flex; align-items: center; gap: 8px; padding: 9px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; min-width: 200px; justify-content: space-between; }
-  .country-dropdown { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); width: 220px; background: #16161f; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; max-height: 300px; overflow-y: auto; z-index: 100; box-shadow: 0 16px 48px rgba(0,0,0,0.6); margin-top: 4px; }
-  .country-item { display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 14px; background: transparent; border: none; color: var(--text); font-size: 12px; cursor: pointer; text-align: left; }
-  .country-item:hover { background: rgba(255,255,255,0.05); }
-  .country-item.active { background: rgba(255,255,255,0.08); }
-
-  /* Sub-categories */
-  .subcats { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 20px; }
-  .subcat-btn { display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 12px; cursor: pointer; transition: all 0.2s; }
-  .subcat-btn.active { color: #fff; font-weight: 700; }
-
-  /* Search */
-  .search-wrap { display: flex; justify-content: center; margin-bottom: 30px; }
-  .search-btn { padding: 13px 40px; border: none; border-radius: 12px; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
-  .search-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* Loading */
-  .loading { padding: 50px 0; text-align: center; }
-  .loading-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; margin-bottom: 16px; max-width: 320px; margin-left: auto; margin-right: auto; }
-  .loading-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
-  .loading p { color: var(--text-dim); font-size: 14px; }
-  .loading .sub { color: var(--text-muted); font-size: 11px; font-family: monospace; margin-top: 4px; }
-
-  /* Results grid */
-  .results-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-  .results-header h2 { font-size: 16px; font-weight: 700; font-family: 'Playfair Display', serif; }
-  .results-header .meta { font-size: 11px; color: var(--text-muted); font-family: monospace; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
-
-  /* Card */
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; transition: all 0.3s; display: flex; flex-direction: column; animation: fadeIn 0.4s ease both; }
-  .card:hover { background: var(--card-hover); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
-  .card-num { font-size: 18px; font-weight: 900; color: rgba(255,255,255,0.1); font-family: monospace; }
-  .tag { display: inline-block; padding: 2px 8px; font-size: 9px; font-weight: 800; letter-spacing: 0.08em; color: #fff; border-radius: 3px; font-family: monospace; text-transform: uppercase; }
-  .celeb-tag { padding: 2px 8px; background: rgba(255,45,85,0.1); border: 1px solid rgba(255,45,85,0.2); border-radius: 12px; font-size: 11px; color: #ff7a9e; font-weight: 600; display: inline-block; margin: 0 4px 4px 0; }
-  .card h3 { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.35; font-family: 'Playfair Display', serif; margin-bottom: 6px; }
-  .card p { font-size: 12.5px; color: var(--text-dim); line-height: 1.55; }
-
-  /* Hook */
-  .hook-box { margin-top: 10px; padding: 8px 12px; background: rgba(24,119,242,0.07); border: 1px solid rgba(24,119,242,0.12); border-radius: 9px; position: relative; }
-  .hook-label { font-size: 8px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; font-family: monospace; }
-  .hook-text { font-size: 12.5px; color: rgba(255,255,255,0.75); font-style: italic; line-height: 1.4; padding-right: 46px; }
-  .copy-btn { position: absolute; right: 8px; top: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; padding: 3px 7px; font-size: 10px; color: rgba(255,255,255,0.4); cursor: pointer; font-family: monospace; }
-  .copy-btn.copied { background: rgba(52,199,89,0.2); color: #34c759; }
-
-  /* Heat bar */
-  .heat-wrap { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-  .heat-track { flex: 1; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
-  .heat-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
-  .heat-num { font-size: 11px; font-weight: 700; font-family: monospace; }
-
-  /* Source */
-  .source-btn { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
-  .source-btn:hover { opacity: 0.85; }
-
-  /* Meta info */
-  .meta-tag { font-size: 11px; color: #ff9500; font-family: monospace; }
-  .show-name { font-size: 11px; font-weight: 700; color: #ff9500; font-family: monospace; margin-bottom: 4px; }
-  .air-date { font-size: 11px; color: #34c759; font-family: monospace; margin-top: 6px; }
-  .visual-prompt { margin-top: 8px; padding: 6px 10px; background: rgba(175,82,222,0.06); border-radius: 8px; font-size: 11px; color: var(--text-muted); font-family: monospace; }
-  .best-countries { margin-top: 6px; font-size: 11px; color: var(--text-muted); }
-  .inspired { margin-top: 6px; font-size: 11px; color: var(--text-muted); font-family: monospace; }
-  .network-tag { font-size: 10px; font-weight: 700; color: var(--text-dim); background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 4px; font-family: monospace; }
-
-  /* Error */
-  .error-box { text-align: center; padding: 24px; background: rgba(255,107,107,0.06); border-radius: 12px; border: 1px solid rgba(255,107,107,0.12); }
-  .error-box p { color: #ff6b6b; font-size: 13px; margin-bottom: 8px; }
-  .retry-btn { padding: 8px 20px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; font-size: 12px; cursor: pointer; }
-
-  /* Empty */
-  .empty { text-align: center; padding: 50px 20px; color: var(--text-muted); }
-  .empty .big { font-size: 48px; margin-bottom: 14px; }
-
-  /* Footer */
-  footer { margin-top: 50px; text-align: center; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.03); }
-  footer p { font-size: 10px; color: rgba(255,255,255,0.12); font-family: monospace; }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
+  :root { --bg:#0a0a0f; --card:rgba(255,255,255,0.04); --card-h:rgba(255,255,255,0.07); --bdr:rgba(255,255,255,0.08); --t:#f0f0f0; --td:rgba(255,255,255,0.5); --tm:rgba(255,255,255,0.3); --red:#ff2d55; --purple:#af52de; --orange:#ff9500; --blue:#1877f2; --green:#34c759; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--t);font-family:'DM Sans',sans-serif;min-height:100vh}
+  .container{max-width:900px;margin:0 auto;padding:32px 20px}
+  .header{text-align:center;margin-bottom:28px}
+  .badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-family:monospace;margin-bottom:12px}
+  .header h1{font-size:clamp(26px,5vw,40px);font-weight:900;font-family:'Playfair Display',Georgia,serif;background:linear-gradient(135deg,#fff,rgba(255,255,255,.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:4px}
+  .header p{color:var(--tm);font-size:11px;font-family:monospace}
+  .pillars{display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .pill{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;border:1px solid var(--bdr);background:rgba(255,255,255,.03);color:var(--td);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+  .pill.on{color:#fff;font-weight:700}
+  .pill .ic{font-size:18px}
+  .pill .sub{font-size:9px;opacity:.5;font-family:monospace}
+  .cw{display:flex;justify-content:center;margin-bottom:12px;position:relative}
+  .cbtn{display:flex;align-items:center;gap:8px;padding:9px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--t);font-size:13px;font-weight:600;cursor:pointer;min-width:200px;justify-content:space-between}
+  .cdd{position:absolute;top:100%;left:50%;transform:translateX(-50%);width:240px;background:#16161f;border:1px solid rgba(255,255,255,.1);border-radius:10px;max-height:320px;overflow-y:auto;z-index:100;box-shadow:0 16px 48px rgba(0,0,0,.6);margin-top:4px}
+  .ci{display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;background:transparent;border:none;color:var(--t);font-size:12px;cursor:pointer;text-align:left}
+  .ci:hover{background:rgba(255,255,255,.05)}
+  .ci.on{background:rgba(255,255,255,.08)}
+  .subs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px}
+  .sb{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1px solid var(--bdr);background:rgba(255,255,255,.03);color:var(--td);font-size:12px;cursor:pointer;transition:all .2s}
+  .sb.on{color:#fff;font-weight:700}
+  .sw{display:flex;justify-content:center;margin-bottom:30px}
+  .go{padding:13px 40px;border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px}
+  .go:disabled{opacity:.4;cursor:not-allowed}
+  .ld{padding:50px 0;text-align:center}
+  .lbar{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto}
+  .lfill{height:100%;border-radius:2px;transition:width .5s ease}
+  .ld p{color:var(--td);font-size:14px}
+  .ld .s2{color:var(--tm);font-size:11px;font-family:monospace;margin-top:4px}
+  .rh{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .rh h2{font-size:16px;font-weight:700;font-family:'Playfair Display',serif}
+  .rh .mt{font-size:11px;color:var(--tm);font-family:monospace}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:18px 20px;transition:all .3s;display:flex;flex-direction:column;animation:fi .4s ease both}
+  .card:hover{background:var(--card-h);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+  .ct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+  .cn{font-size:18px;font-weight:900;color:rgba(255,255,255,.1);font-family:monospace}
+  .tag{display:inline-block;padding:2px 8px;font-size:9px;font-weight:800;letter-spacing:.08em;color:#fff;border-radius:3px;font-family:monospace;text-transform:uppercase}
+  .ctag{padding:2px 8px;background:rgba(255,45,85,.1);border:1px solid rgba(255,45,85,.2);border-radius:12px;font-size:11px;color:#ff7a9e;font-weight:600;display:inline-block;margin:0 4px 4px 0}
+  .card h3{font-size:15px;font-weight:700;color:var(--t);line-height:1.35;font-family:'Playfair Display',serif;margin-bottom:6px}
+  .card p{font-size:12.5px;color:var(--td);line-height:1.55}
+  .hbox{margin-top:10px;padding:8px 12px;background:rgba(24,119,242,.07);border:1px solid rgba(24,119,242,.12);border-radius:9px;position:relative}
+  .hl{font-size:8px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;font-family:monospace}
+  .ht{font-size:12.5px;color:rgba(255,255,255,.75);font-style:italic;line-height:1.4;padding-right:46px}
+  .cp{position:absolute;right:8px;top:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:3px 7px;font-size:10px;color:rgba(255,255,255,.4);cursor:pointer;font-family:monospace}
+  .cp.ok{background:rgba(52,199,89,.2);color:#34c759}
+  .hw{display:flex;align-items:center;gap:8px;margin-top:6px}
+  .htr{flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+  .hf{height:100%;border-radius:2px;transition:width 1s ease}
+  .hn{font-size:11px;font-weight:700;font-family:monospace}
+  .src{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;text-decoration:none;transition:all .2s}
+  .src:hover{opacity:.85}
+  .sn{font-size:11px;font-weight:700;color:var(--orange);font-family:monospace;margin-bottom:4px}
+  .ad{font-size:11px;color:var(--green);font-family:monospace;margin-top:6px}
+  .vp{margin-top:8px;padding:6px 10px;background:rgba(175,82,222,.06);border-radius:8px;font-size:11px;color:var(--tm);font-family:monospace}
+  .bc{margin-top:6px;font-size:11px;color:var(--tm)}
+  .ins{margin-top:6px;font-size:11px;color:var(--tm);font-family:monospace}
+  .ntag{font-size:10px;font-weight:700;color:var(--td);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;font-family:monospace}
+  .ebox{text-align:center;padding:24px;background:rgba(255,107,107,.06);border-radius:12px;border:1px solid rgba(255,107,107,.12)}
+  .ebox p{color:#ff6b6b;font-size:13px;margin-bottom:8px}
+  .rb{padding:8px 20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;cursor:pointer}
+  .empty{text-align:center;padding:50px 20px;color:var(--tm)}
+  .empty .big{font-size:48px;margin-bottom:14px}
+  footer{margin-top:50px;text-align:center;padding:16px 0;border-top:1px solid rgba(255,255,255,.03)}
+  footer p{font-size:10px;color:rgba(255,255,255,.12);font-family:monospace}
+  @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @media(max-width:500px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="container" id="app"></div>
 
 <script>
-/* ═══════════════ DATA ═══════════════ */
-const COUNTRIES = [
-  {code:"US",name:"United States",flag:"🇺🇸",lang:"English",region:"NA"},
-  {code:"UK",name:"United Kingdom",flag:"🇬🇧",lang:"English",region:"EU"},
-  {code:"DE",name:"Germany",flag:"🇩🇪",lang:"German",region:"EU"},
-  {code:"FR",name:"France",flag:"🇫🇷",lang:"French",region:"EU"},
-  {code:"IT",name:"Italy",flag:"🇮🇹",lang:"Italian",region:"EU"},
-  {code:"ES",name:"Spain",flag:"🇪🇸",lang:"Spanish",region:"EU"},
-  {code:"NL",name:"Netherlands",flag:"🇳🇱",lang:"Dutch",region:"EU"},
-  {code:"BE",name:"Belgium",flag:"🇧🇪",lang:"French/Dutch",region:"EU"},
-  {code:"PT",name:"Portugal",flag:"🇵🇹",lang:"Portuguese",region:"EU"},
-  {code:"SE",name:"Sweden",flag:"🇸🇪",lang:"Swedish",region:"EU"},
-  {code:"NO",name:"Norway",flag:"🇳🇴",lang:"Norwegian",region:"EU"},
-  {code:"DK",name:"Denmark",flag:"🇩🇰",lang:"Danish",region:"EU"},
-  {code:"PL",name:"Poland",flag:"🇵🇱",lang:"Polish",region:"EU"},
-  {code:"AT",name:"Austria",flag:"🇦🇹",lang:"German",region:"EU"},
-  {code:"CH",name:"Switzerland",flag:"🇨🇭",lang:"German/French",region:"EU"},
-  {code:"IE",name:"Ireland",flag:"🇮🇪",lang:"English",region:"EU"},
-  {code:"AU",name:"Australia",flag:"🇦🇺",lang:"English",region:"OC"},
-  {code:"CA",name:"Canada",flag:"🇨🇦",lang:"English/French",region:"NA"},
-  {code:"BR",name:"Brazil",flag:"🇧🇷",lang:"Portuguese",region:"SA"},
-  {code:"KR",name:"South Korea",flag:"🇰🇷",lang:"Korean",region:"AS"},
-  {code:"JP",name:"Japan",flag:"🇯🇵",lang:"Japanese",region:"AS"},
-  {code:"IN",name:"India",flag:"🇮🇳",lang:"English/Hindi",region:"AS"},
-  {code:"VN",name:"Vietnam",flag:"🇻🇳",lang:"Vietnamese",region:"AS"},
-  {code:"TH",name:"Thailand",flag:"🇹🇭",lang:"Thai",region:"AS"},
-  {code:"PH",name:"Philippines",flag:"🇵🇭",lang:"English/Filipino",region:"AS"},
+/*╔═══════════════════════════════════════════════════════╗
+  ║  ĐỔI URL NÀY THÀNH WORKER URL CỦA ANH              ║
+  ╚═══════════════════════════════════════════════════════╝*/
+const WORKER_URL = "https://crh-proxyresearch.hupchaopr.workers.dev";
+/*  Ví dụ: "https://crh-proxy.johndoe.workers.dev"       */
+
+/* ═══ DATA ═══ */
+const C=[
+  {code:"US",name:"United States",flag:"🇺🇸",lang:"English",r:"NA"},
+  {code:"UK",name:"United Kingdom",flag:"🇬🇧",lang:"English",r:"EU"},
+  {code:"DE",name:"Germany",flag:"🇩🇪",lang:"German",r:"EU"},
+  {code:"FR",name:"France",flag:"🇫🇷",lang:"French",r:"EU"},
+  {code:"IT",name:"Italy",flag:"🇮🇹",lang:"Italian",r:"EU"},
+  {code:"ES",name:"Spain",flag:"🇪🇸",lang:"Spanish",r:"EU"},
+  {code:"NL",name:"Netherlands",flag:"🇳🇱",lang:"Dutch",r:"EU"},
+  {code:"BE",name:"Belgium",flag:"🇧🇪",lang:"French/Dutch",r:"EU"},
+  {code:"PT",name:"Portugal",flag:"🇵🇹",lang:"Portuguese",r:"EU"},
+  {code:"SE",name:"Sweden",flag:"🇸🇪",lang:"Swedish",r:"EU"},
+  {code:"NO",name:"Norway",flag:"🇳🇴",lang:"Norwegian",r:"EU"},
+  {code:"DK",name:"Denmark",flag:"🇩🇰",lang:"Danish",r:"EU"},
+  {code:"PL",name:"Poland",flag:"🇵🇱",lang:"Polish",r:"EU"},
+  {code:"AT",name:"Austria",flag:"🇦🇹",lang:"German",r:"EU"},
+  {code:"CH",name:"Switzerland",flag:"🇨🇭",lang:"German/French",r:"EU"},
+  {code:"IE",name:"Ireland",flag:"🇮🇪",lang:"English",r:"EU"},
+  {code:"AU",name:"Australia",flag:"🇦🇺",lang:"English",r:"OC"},
+  {code:"CA",name:"Canada",flag:"🇨🇦",lang:"English/French",r:"NA"},
+  {code:"BR",name:"Brazil",flag:"🇧🇷",lang:"Portuguese",r:"SA"},
+  {code:"KR",name:"South Korea",flag:"🇰🇷",lang:"Korean",r:"AS"},
+  {code:"JP",name:"Japan",flag:"🇯🇵",lang:"Japanese",r:"AS"},
+  {code:"IN",name:"India",flag:"🇮🇳",lang:"English/Hindi",r:"AS"},
+  {code:"VN",name:"Vietnam",flag:"🇻🇳",lang:"Vietnamese",r:"AS"},
+  {code:"TH",name:"Thailand",flag:"🇹🇭",lang:"Thai",r:"AS"},
+  {code:"PH",name:"Philippines",flag:"🇵🇭",lang:"English/Filipino",r:"AS"},
 ];
-
-const EU_T1 = ["UK","DE","FR","IT","ES","NL","SE","NO","DK","CH","AT","IE","BE"];
-
-const PILLARS = [
+const ET=["UK","DE","FR","IT","ES","NL","SE","NO","DK","CH","AT","IE","BE"];
+const PL=[
   {id:"celebs",label:"Celebs & Người nổi tiếng",icon:"💍",desc:"Kết hôn · ly hôn · scandal",color:"#ff2d55"},
   {id:"ai_stories",label:"AI Viral Stories",icon:"✨",desc:"Câu chuyện viral cho EU",color:"#af52de"},
   {id:"tv_shows",label:"TV Shows & Reality",icon:"📺",desc:"Reality TV · Series · Soap",color:"#ff9500"},
 ];
+const CS=[{id:"all",l:"Tất cả",i:"🔥"},{id:"marriage",l:"Kết hôn",i:"💒"},{id:"divorce",l:"Ly hôn",i:"💔"},{id:"baby",l:"Sinh con",i:"👶"},{id:"scandal",l:"Scandal",i:"😱"},{id:"dating",l:"Hẹn hò",i:"❤️"}];
+const TS=[{id:"all_tv",l:"Tất cả",i:"🔥"},{id:"reality",l:"Reality TV",i:"🎪"},{id:"soap",l:"Soap Opera",i:"🎭"},{id:"series",l:"Series mùa",i:"📅"},{id:"upcoming",l:"Sắp ra mắt",i:"🆕"},{id:"cast_news",l:"Tin diễn viên",i:"🌟"}];
 
-const CELEB_SUBS = [
-  {id:"all",label:"Tất cả",icon:"🔥"},{id:"marriage",label:"Kết hôn",icon:"💒"},
-  {id:"divorce",label:"Ly hôn",icon:"💔"},{id:"baby",label:"Sinh con",icon:"👶"},
-  {id:"scandal",label:"Scandal",icon:"😱"},{id:"dating",label:"Hẹn hò",icon:"❤️"},
-];
-const TV_SUBS = [
-  {id:"all_tv",label:"Tất cả",icon:"🔥"},{id:"reality",label:"Reality TV",icon:"🎪"},
-  {id:"soap",label:"Soap Opera",icon:"🎭"},{id:"series",label:"Series mùa",icon:"📅"},
-  {id:"upcoming",label:"Sắp ra mắt",icon:"🆕"},{id:"cast_news",label:"Tin diễn viên",icon:"🌟"},
-];
+/* ═══ STATE ═══ */
+let S={pl:"celebs",sc:"all",ci:0,co:false,res:[],ld:false,err:null,srch:false,el:0,tc:null};
+let tmr=null;
+const gc=()=>C[S.ci], gp=()=>PL.find(p=>p.id===S.pl), gs=()=>S.pl==="celebs"?CS:S.pl==="tv_shows"?TS:null;
 
-/* ═══════════════ STATE ═══════════════ */
-let state = {
-  apiKey: localStorage.getItem("crh_api_key") || "",
-  showApiInput: false,
-  pillar: "celebs",
-  subCat: "all",
-  countryIdx: 0,
-  countryOpen: false,
-  results: [],
-  loading: false,
-  error: null,
-  searched: false,
-  elapsed: 0,
-  tokenCost: null,
-};
-let timer = null;
-
-function getCountry() { return COUNTRIES[state.countryIdx]; }
-function getPillar() { return PILLARS.find(p => p.id === state.pillar); }
-function getSubCats() { return state.pillar === "celebs" ? CELEB_SUBS : state.pillar === "tv_shows" ? TV_SUBS : null; }
-
-/* ═══════════════ PROMPT BUILDER (same as artifact) ═══════════════ */
-function buildPrompt(country, pillar, subCat) {
-  const langRule = `ALL text fields (title, description, hook) MUST be written in ${country.lang}.`;
-  const base = `You are a senior Facebook content researcher for ${country.name}. Search the web thoroughly.
-RULES:
-- ${langRule}
-- Every item MUST have "source_url": a REAL working URL. CRITICAL.
-- Prefer major news outlets, entertainment sites, official pages.
-- Output ONLY a valid JSON array. No markdown, no explanations.
-- Never refuse. Provide best findings even if uncertain.
-- Use LOCAL celebrities/shows of ${country.name}.`;
-
-  if (pillar === "celebs") {
-    const m = {all:"ALL celebrity life events",marriage:"MARRIAGES, ENGAGEMENTS",divorce:"DIVORCES, BREAKUPS",baby:"PREGNANCIES, BIRTHS",scandal:"SCANDALS, controversies",dating:"NEW RELATIONSHIPS, dating"};
-    return `${base}\n\nFind TOP 8 celebrity news in ${country.name}: ${m[subCat]}.\n\nEach item: "title" (${country.lang}, max 15 words), "description" (${country.lang}, 2-3 sentences), "heat" (1-100), "type" (breaking/rising/hot/new), "celeb_names" (array), "event_type" (marriage/divorce/baby/scandal/dating/other), "source_url" (real URL), "source_name", "hook" (${country.lang}, max 20 words), "fb_format" (reel/carousel/discussion/photo)\n\n[{"title":"...","description":"...","heat":90,"type":"hot","celeb_names":["..."],"event_type":"marriage","source_url":"https://...","source_name":"...","hook":"...","fb_format":"carousel"}]`;
+/* ═══ PROMPT ═══ */
+function bp(c,pl,sc){
+  const lr=`ALL text (title,description,hook) MUST be in ${c.lang}.`;
+  const b=`You are a senior Facebook content researcher for ${c.name}. Search the web thoroughly.\nRULES:\n- ${lr}\n- Every item MUST have "source_url": a REAL working URL. CRITICAL.\n- Use LOCAL celebrities/shows of ${c.name}.\n- Output ONLY valid JSON array. No markdown.`;
+  if(pl==="celebs"){
+    const m={all:"ALL celebrity life events",marriage:"MARRIAGES, ENGAGEMENTS",divorce:"DIVORCES, BREAKUPS",baby:"PREGNANCIES, BIRTHS",scandal:"SCANDALS, controversies",dating:"NEW RELATIONSHIPS, dating"};
+    return `${b}\n\nFind TOP 8 celebrity news in ${c.name}: ${m[sc]}.\n\nEach: "title"(${c.lang},max 15w),"description"(${c.lang},2-3 sentences),"heat"(1-100),"type"(breaking/rising/hot/new),"celeb_names"(array),"event_type"(marriage/divorce/baby/scandal/dating/other),"source_url"(real URL),"source_name","hook"(${c.lang},max 20w),"fb_format"(reel/carousel/discussion/photo)\n\n[{"title":"...","description":"...","heat":90,"type":"hot","celeb_names":["..."],"event_type":"marriage","source_url":"https://...","source_name":"...","hook":"...","fb_format":"carousel"}]`;
   }
-  if (pillar === "ai_stories") {
-    return `${base}\n\nGenerate 8 VIRAL STORY IDEAS for European Facebook audiences (UK,DE,FR,IT,ES,NL,SE). Stories will be written by AI with AI images.\n\nTypes: rescued animal saves owner, elderly kindness, child changes community, lost pet reunion, homeless talent, soldier surprise, unlikely friendships, pay-it-forward.\n\nEach: "title" (English, max 15 words), "description" (English, 3-4 sentence outline), "heat" (1-100), "type" (heartwarming/inspiring/emotional/surprising/reunion), "visual_prompt" (1 sentence for AI image), "target_emotion" (tears/joy/hope/shock/nostalgia/pride), "inspired_by", "inspired_url" (real URL if found), "hook" (English, max 20 words), "fb_format" (carousel/reel/photo), "best_countries" (array of 3-5 EU codes)\n\n[{"title":"...","description":"...","heat":90,"type":"heartwarming","visual_prompt":"...","target_emotion":"tears","inspired_by":"...","inspired_url":"...","hook":"...","fb_format":"carousel","best_countries":["UK","DE"]}]`;
+  if(pl==="ai_stories"){
+    return `${b}\n\nGenerate 8 VIRAL STORY IDEAS for European Facebook (UK,DE,FR,IT,ES,NL,SE). AI-written stories with AI images.\n\nTypes: rescued animal saves owner, elderly kindness, child changes community, lost pet reunion, unlikely friendships, pay-it-forward.\n\nEach: "title"(English,max 15w),"description"(English,3-4 sentence outline),"heat"(1-100),"type"(heartwarming/inspiring/emotional/surprising/reunion),"visual_prompt"(1 sentence AI image),"target_emotion"(tears/joy/hope/shock/nostalgia/pride),"inspired_by","inspired_url"(real URL if found),"hook"(English,max 20w),"fb_format"(carousel/reel/photo),"best_countries"(array 3-5 EU codes)\n\n[{"title":"...","description":"...","heat":90,"type":"heartwarming","visual_prompt":"...","target_emotion":"tears","inspired_by":"...","inspired_url":"...","hook":"...","fb_format":"carousel","best_countries":["UK","DE"]}]`;
   }
-  if (pillar === "tv_shows") {
-    const m = {all_tv:"ALL: reality, soap, drama, upcoming, cast",reality:"REALITY TV shows",soap:"SOAP OPERAS, long-running dramas",series:"TV SERIES new seasons",upcoming:"UPCOMING premieres next 1-4 weeks",cast_news:"CAST NEWS, actor updates"};
-    return `${base}\n\nFind TOP 8 TV show news in ${country.name}: ${m[subCat]}. Prioritize Reality TV, soap operas, series with active fans.\n\nEach: "title" (${country.lang}, max 15 words), "description" (${country.lang}, 2-3 sentences with show name, network, dates), "heat" (1-100), "type" (breaking/rising/hot/new), "show_name", "network", "show_type" (reality/soap/drama_series/comedy/competition/documentary), "source_url" (real URL), "source_name", "hook" (${country.lang}, max 20 words), "fb_format" (reel/carousel/discussion/link_post), "air_date" (if applicable)\n\n[{"title":"...","description":"...","heat":90,"type":"hot","show_name":"...","network":"Netflix","show_type":"reality","source_url":"https://...","source_name":"...","hook":"...","fb_format":"discussion","air_date":"March 20, 2026"}]`;
+  if(pl==="tv_shows"){
+    const m={all_tv:"ALL: reality,soap,drama,upcoming,cast",reality:"REALITY TV shows",soap:"SOAP OPERAS",series:"TV SERIES new seasons",upcoming:"UPCOMING premieres",cast_news:"CAST NEWS"};
+    return `${b}\n\nFind TOP 8 TV show news in ${c.name}: ${m[sc]}. Prioritize Reality TV, soap operas.\n\nEach: "title"(${c.lang},max 15w),"description"(${c.lang},2-3 sentences),"heat"(1-100),"type"(breaking/rising/hot/new),"show_name","network","show_type"(reality/soap/drama_series/comedy/competition/documentary),"source_url"(real URL),"source_name","hook"(${c.lang},max 20w),"fb_format"(reel/carousel/discussion/link_post),"air_date"(if applicable)\n\n[{"title":"...","description":"...","heat":90,"type":"hot","show_name":"...","network":"Netflix","show_type":"reality","source_url":"https://...","source_name":"...","hook":"...","fb_format":"discussion","air_date":"March 20, 2026"}]`;
   }
   return "";
 }
 
-function extractJSON(text) {
-  if (!text) return null;
-  const c = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
-  try { return JSON.parse(c); } catch {}
-  const m = c.match(/\[[\s\S]*\]/);
-  if (m) { try { return JSON.parse(m[0]); } catch {} try { return JSON.parse(m[0].replace(/,\s*]/g,"]").replace(/,\s*}/g,"}")); } catch {} }
-  const s = c.indexOf("["), e = c.lastIndexOf("]");
-  if (s !== -1 && e > s) try { return JSON.parse(c.slice(s, e+1)); } catch {}
+function ej(t){
+  if(!t)return null;
+  const c=t.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
+  try{return JSON.parse(c)}catch{}
+  const m=c.match(/\[[\s\S]*\]/);
+  if(m){try{return JSON.parse(m[0])}catch{}try{return JSON.parse(m[0].replace(/,\s*]/g,"]").replace(/,\s*}/g,"}"))}catch{}}
+  const s=c.indexOf("["),e=c.lastIndexOf("]");
+  if(s!==-1&&e>s)try{return JSON.parse(c.slice(s,e+1))}catch{}
   return null;
 }
 
-/* ═══════════════ API CALL ═══════════════ */
-async function doSearch() {
-  if (!state.apiKey) { state.showApiInput = true; state.error = "Vui lòng nhập API key trước"; render(); return; }
-  state.loading = true; state.error = null; state.results = []; state.searched = true; state.elapsed = 0; state.tokenCost = null;
-  render();
-  timer = setInterval(() => { state.elapsed += 0.5; render(); }, 500);
-
-  try {
-    const res = await fetch("crh-proxyresearch.hupchaopr.workers.dev", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 3000,
-        system: "You are a JSON API. Output ONLY valid JSON arrays. Never explain, never refuse, never use markdown.",
-        tools: [{ type: "web_search_20250305", name: "web_search" }],
-        messages: [{ role: "user", content: buildPrompt(getCountry(), state.pillar, state.subCat) }],
+/* ═══ SEARCH ═══ */
+async function doSearch(){
+  if(WORKER_URL.includes("YOUR-USERNAME")){S.err="⚠️ Chưa cấu hình Worker URL. Mở file HTML → sửa WORKER_URL ở dòng đầu script.";S.srch=true;render();return}
+  S.ld=true;S.err=null;S.res=[];S.srch=true;S.el=0;S.tc=null;render();
+  tmr=setInterval(()=>{S.el+=.5;render()},500);
+  try{
+    const res=await fetch(WORKER_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:3000,
+        system:"You are a JSON API. Output ONLY valid JSON arrays. Never explain, never refuse.",
+        tools:[{type:"web_search_20250305",name:"web_search"}],
+        messages:[{role:"user",content:bp(gc(),S.pl,S.sc)}],
       }),
     });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-
-    // Calculate token cost
-    const usage = data.usage || {};
-    const inTokens = usage.input_tokens || 0;
-    const outTokens = usage.output_tokens || 0;
-    const cost = (inTokens * 0.003 / 1000) + (outTokens * 0.015 / 1000);
-    state.tokenCost = { input: inTokens, output: outTokens, cost: cost.toFixed(4) };
-
-    const fullText = (data.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
-    const parsed = extractJSON(fullText);
-    if (Array.isArray(parsed) && parsed.length > 0) state.results = parsed.slice(0, 8);
-    else state.error = "Không parse được kết quả. Thử lại.";
-  } catch (err) {
-    state.error = err.message || "Lỗi kết nối";
-  } finally {
-    state.loading = false;
-    clearInterval(timer);
-    render();
-  }
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message||JSON.stringify(data.error));
+    const u=data.usage||{};
+    const cost=(u.input_tokens||0)*0.003/1000+(u.output_tokens||0)*0.015/1000;
+    S.tc={i:u.input_tokens||0,o:u.output_tokens||0,c:cost.toFixed(4)};
+    const ft=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+    const p=ej(ft);
+    if(Array.isArray(p)&&p.length>0)S.res=p.slice(0,8);
+    else S.err="Không parse được kết quả. Thử lại.";
+  }catch(e){S.err=e.message||"Lỗi kết nối"}
+  finally{S.ld=false;clearInterval(tmr);render()}
 }
 
-/* ═══════════════ RENDER ═══════════════ */
-function render() {
-  const p = getPillar();
-  const country = getCountry();
-  const subs = getSubCats();
-  const showCountry = state.pillar !== "ai_stories";
+/* ═══ RENDER ═══ */
+function render(){
+  const p=gp(),c=gc(),subs=gs(),showC=S.pl!=="ai_stories";
+  let h=`<header class="header">
+    <div class="badge" style="background:${p.color}18;border:1px solid ${p.color}33;color:${p.color}">● Deep Search · Facebook Content</div>
+    <h1>Content Research Hub</h1>
+    <p>AI + Web Search · Nguồn bài báo gốc · Tối ưu Facebook</p>
+  </header>
+  <div class="pillars">${PL.map(pl=>`<button class="pill ${S.pl===pl.id?'on':''}" style="${S.pl===pl.id?`background:${pl.color}20;border-color:${pl.color}40`:''}" onclick="S.pl='${pl.id}';S.sc='${pl.id==='celebs'?'all':pl.id==='tv_shows'?'all_tv':''}';S.res=[];S.srch=false;S.err=null;render()"><span class="ic">${pl.icon}</span><div><div>${pl.label}</div><div class="sub">${pl.desc}</div></div></button>`).join('')}</div>`;
 
-  let html = `
-    <header class="header">
-      <div class="badge" style="background:${p.color}18;border:1px solid ${p.color}33;color:${p.color}">● Deep Search · Facebook Content</div>
-      <h1>Content Research Hub</h1>
-      <p>AI + Web Search · Nguồn bài báo gốc · Tối ưu Facebook</p>
-    </header>
-
-    <!-- API Key -->
-    <div class="api-section">
-      ${state.apiKey && !state.showApiInput
-        ? `<button class="api-toggle" onclick="state.showApiInput=true;render()">🔑 API Key: ****${state.apiKey.slice(-6)} · Đổi key</button>`
-        : `<button class="api-toggle" onclick="state.showApiInput=!state.showApiInput;render()">🔑 ${state.showApiInput ? 'Ẩn' : 'Nhập'} API Key Anthropic</button>`}
-      ${state.showApiInput ? `
-        <div class="api-input-wrap">
-          <input class="api-input" type="password" placeholder="sk-ant-api..." value="${state.apiKey}" id="apiInput">
-          <button class="api-save" onclick="state.apiKey=document.getElementById('apiInput').value;localStorage.setItem('crh_api_key',state.apiKey);state.showApiInput=false;render()">Lưu</button>
-        </div>
-        <div class="api-cost">💰 ~$0.03-0.08/lần search · Lấy key tại <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#4da3ff">console.anthropic.com</a></div>
-      ` : ''}
-      ${state.apiKey && !state.showApiInput ? '<div class="api-status">✓ Đã kết nối</div>' : ''}
-    </div>
-
-    <!-- Pillars -->
-    <div class="pillars">
-      ${PILLARS.map(pl => `
-        <button class="pillar-btn ${state.pillar===pl.id?'active':''}" 
-          style="${state.pillar===pl.id ? `background:${pl.color}20;border-color:${pl.color}40` : ''}"
-          onclick="state.pillar='${pl.id}';state.subCat='${pl.id==='celebs'?'all':pl.id==='tv_shows'?'all_tv':''}';state.results=[];state.searched=false;state.error=null;render()">
-          <span class="icon">${pl.icon}</span>
-          <div><div>${pl.label}</div><div class="sub">${pl.desc}</div></div>
-        </button>
-      `).join('')}
-    </div>
-
-    <!-- Country -->
-    ${showCountry ? `
-    <div class="country-wrap">
-      <button class="country-btn" onclick="state.countryOpen=!state.countryOpen;render()">
-        <span>${country.flag} ${country.name}</span>
-        <span style="font-size:9px;opacity:0.4">▼</span>
-      </button>
-      ${state.countryOpen ? `
-        <div class="country-dropdown">
-          ${COUNTRIES.map((c,i) => `
-            <button class="country-item ${i===state.countryIdx?'active':''}" onclick="state.countryIdx=${i};state.countryOpen=false;render()">
-              <span style="font-size:16px">${c.flag}</span> ${c.name}
-              ${EU_T1.includes(c.code)?'<span style="font-size:8px;color:#34c759;font-family:monospace;margin-left:auto">EU T1</span>':''}
-            </button>
-          `).join('')}
-        </div>
-      ` : ''}
-    </div>` : ''}
-
-    <!-- Sub-cats -->
-    ${subs ? `
-    <div class="subcats">
-      ${subs.map(s => `
-        <button class="subcat-btn ${state.subCat===s.id?'active':''}"
-          style="${state.subCat===s.id ? `background:${p.color}20;border-color:${p.color}35` : ''}"
-          onclick="state.subCat='${s.id}';render()">
-          <span style="font-size:13px">${s.icon}</span> ${s.label}
-        </button>
-      `).join('')}
-    </div>` : ''}
-
-    <!-- Search -->
-    <div class="search-wrap">
-      <button class="search-btn" ${state.loading?'disabled':''} 
-        style="background:${state.loading?'rgba(255,255,255,0.05)':`linear-gradient(135deg,${p.color},${p.color}cc)`};box-shadow:${state.loading?'none':`0 4px 20px ${p.color}40`}"
-        onclick="doSearch()">
-        ${state.loading ? 'Đang tìm kiếm...' : `🔍 Tìm ${p.label}`}
-      </button>
-    </div>
-  `;
-
-  // Loading
-  if (state.loading) {
-    const est = 50, pct = Math.min((state.elapsed/est)*100, 96);
-    const steps = ["Khởi tạo AI...","Tìm kiếm web...","Đọc nguồn...","Phân tích...","Tạo kết quả..."];
-    const si = Math.min(Math.floor((state.elapsed/est)*steps.length), steps.length-1);
-    html += `<div class="loading"><div class="loading-bar"><div class="loading-fill" style="width:${pct}%;background:linear-gradient(90deg,#ff9500,#ff6b35)"></div></div><p>${steps[si]}</p><p class="sub">${Math.round(state.elapsed)}s / ~${est}s 🔍</p></div>`;
+  if(showC){
+    h+=`<div class="cw"><button class="cbtn" onclick="S.co=!S.co;render()"><span>${c.flag} ${c.name}</span><span style="font-size:9px;opacity:.4">▼</span></button>`;
+    if(S.co)h+=`<div class="cdd">${C.map((x,i)=>`<button class="ci ${i===S.ci?'on':''}" onclick="S.ci=${i};S.co=false;render()"><span style="font-size:16px">${x.flag}</span>${x.name}${ET.includes(x.code)?'<span style="font-size:8px;color:#34c759;font-family:monospace;margin-left:auto">EU T1</span>':''}</button>`).join('')}</div>`;
+    h+=`</div>`;
   }
 
-  // Error
-  if (state.error) {
-    html += `<div class="error-box"><p>⚠️ ${state.error}</p><button class="retry-btn" onclick="doSearch()">🔄 Thử lại</button></div>`;
+  if(subs)h+=`<div class="subs">${subs.map(s=>`<button class="sb ${S.sc===s.id?'on':''}" style="${S.sc===s.id?`background:${p.color}20;border-color:${p.color}35`:''}" onclick="S.sc='${s.id}';render()"><span style="font-size:13px">${s.i}</span> ${s.l}</button>`).join('')}</div>`;
+
+  h+=`<div class="sw"><button class="go" ${S.ld?'disabled':''} style="background:${S.ld?'rgba(255,255,255,.05)':`linear-gradient(135deg,${p.color},${p.color}cc)`};box-shadow:${S.ld?'none':`0 4px 20px ${p.color}40`}" onclick="doSearch()">${S.ld?'Đang tìm kiếm...':`🔍 Tìm ${p.label}`}</button></div>`;
+
+  if(S.ld){
+    const est=50,pct=Math.min((S.el/est)*100,96);
+    const st=["Khởi tạo AI...","Tìm kiếm web...","Đọc nguồn...","Phân tích...","Tạo kết quả..."];
+    const si=Math.min(Math.floor((S.el/est)*st.length),st.length-1);
+    h+=`<div class="ld"><div class="lbar"><div class="lfill" style="width:${pct}%;background:linear-gradient(90deg,#ff9500,#ff6b35)"></div></div><p>${st[si]}</p><p class="s2">${Math.round(S.el)}s / ~${est}s 🔍</p></div>`;
   }
 
-  // Results
-  if (!state.loading && state.results.length > 0) {
-    html += `<div class="results-header">
-      ${showCountry?`<span style="font-size:22px">${country.flag}</span>`:''}
-      <span style="font-size:20px">${p.icon}</span>
-      <div>
-        <h2>${showCountry?country.name:'EU Tier 1-2'} · ${p.label}</h2>
-        <div class="meta">${state.results.length} kết quả · 🔍 Deep Search${state.tokenCost?` · 💰 $${state.tokenCost.cost}`:''}</div>
-      </div>
-    </div><div class="grid">`;
+  if(S.err)h+=`<div class="ebox"><p>⚠️ ${S.err}</p><button class="rb" onclick="doSearch()">🔄 Thử lại</button></div>`;
 
-    state.results.forEach((item, i) => {
-      const delay = i * 0.06;
-      html += `<div class="card" style="animation-delay:${delay}s;border-color:${p.color}18">`;
-      
-      // Card top
-      html += `<div class="card-top"><div style="display:flex;align-items:center;gap:8px"><span class="card-num">${String(i+1).padStart(2,'0')}</span>`;
-      
-      if (state.pillar === 'celebs') {
-        const ec = {marriage:"#34c759",divorce:"#ff6b6b",baby:"#ffb800",scandal:"#ff2d55",dating:"#ff69b4",other:"#888"};
-        const el = {marriage:"💒 KẾT HÔN",divorce:"💔 LY HÔN",baby:"👶 SINH CON",scandal:"😱 SCANDAL",dating:"❤️ HẸN HÒ",other:"📰 TIN MỚI"};
-        html += `<span class="tag" style="background:${ec[item.event_type]||'#888'}">${el[item.event_type]||el.other}</span>`;
-      } else if (state.pillar === 'tv_shows') {
-        const tc = {breaking:"#ff2d55",new:"#5856d6",rising:"#ff9500",hot:"#ff6b35"};
-        html += `<span class="tag" style="background:${tc[item.type]||'#ff9500'}">${(item.type||'hot').toUpperCase()}</span>`;
-        if (item.show_type) html += `<span class="tag" style="background:rgba(255,255,255,0.15)">${item.show_type.replace('_',' ')}</span>`;
-      } else {
-        const ti = {heartwarming:"💖",inspiring:"🌟",emotional:"😢",surprising:"😲",reunion:"🤝"};
-        html += `<span style="font-size:16px">${ti[item.type]||'✨'}</span><span class="tag" style="background:#af52de">${item.type||'story'}</span>`;
-        if (item.target_emotion) html += `<span class="tag" style="background:rgba(255,255,255,0.15)">🎭 ${item.target_emotion}</span>`;
+  if(!S.ld&&S.res.length>0){
+    h+=`<div class="rh">${showC?`<span style="font-size:22px">${c.flag}</span>`:''}<span style="font-size:20px">${p.icon}</span><div><h2>${showC?c.name:'EU Tier 1-2'} · ${p.label}</h2><div class="mt">${S.res.length} kết quả · 🔍 Deep Search${S.tc?` · 💰 $${S.tc.c}`:''}</div></div></div><div class="grid">`;
+    S.res.forEach((it,i)=>{
+      h+=`<div class="card" style="animation-delay:${i*.06}s;border-color:${p.color}18"><div class="ct"><div style="display:flex;align-items:center;gap:8px"><span class="cn">${String(i+1).padStart(2,'0')}</span>`;
+      if(S.pl==='celebs'){
+        const ec={marriage:"#34c759",divorce:"#ff6b6b",baby:"#ffb800",scandal:"#ff2d55",dating:"#ff69b4",other:"#888"};
+        const el={marriage:"💒 KẾT HÔN",divorce:"💔 LY HÔN",baby:"👶 SINH CON",scandal:"😱 SCANDAL",dating:"❤️ HẸN HÒ",other:"📰 TIN"};
+        h+=`<span class="tag" style="background:${ec[it.event_type]||'#888'}">${el[it.event_type]||el.other}</span>`;
+      }else if(S.pl==='tv_shows'){
+        const tc={breaking:"#ff2d55",new:"#5856d6",rising:"#ff9500",hot:"#ff6b35"};
+        h+=`<span class="tag" style="background:${tc[it.type]||'#ff9500'}">${(it.type||'hot').toUpperCase()}</span>`;
+        if(it.show_type)h+=`<span class="tag" style="background:rgba(255,255,255,.15)">${it.show_type.replace('_',' ')}</span>`;
+      }else{
+        const ti={heartwarming:"💖",inspiring:"🌟",emotional:"😢",surprising:"😲",reunion:"🤝"};
+        h+=`<span style="font-size:16px">${ti[it.type]||'✨'}</span><span class="tag" style="background:#af52de">${it.type||'story'}</span>`;
+        if(it.target_emotion)h+=`<span class="tag" style="background:rgba(255,255,255,.15)">🎭 ${it.target_emotion}</span>`;
       }
-      html += `</div>`;
-      if (item.network) html += `<span class="network-tag">${item.network}</span>`;
-      if (item.fb_format) html += `<span class="tag" style="background:rgba(255,255,255,0.1)">${item.fb_format}</span>`;
-      html += `</div>`;
-
-      // Celeb names
-      if (item.celeb_names?.length) html += `<div style="margin-bottom:6px">${item.celeb_names.map(n=>`<span class="celeb-tag">${n}</span>`).join('')}</div>`;
-      
-      // Show name
-      if (item.show_name) html += `<div class="show-name">📺 ${item.show_name}</div>`;
-
-      // Title + desc
-      html += `<h3>${item.title||''}</h3><p>${item.description||''}</p>`;
-
-      // Air date
-      if (item.air_date && item.air_date !== 'TBA') html += `<div class="air-date">📅 ${item.air_date}</div>`;
-      
-      // Visual prompt
-      if (item.visual_prompt) html += `<div class="visual-prompt">🎨 ${item.visual_prompt}</div>`;
-      
-      // Best countries
-      if (item.best_countries?.length) html += `<div class="best-countries">🌍 Best: ${item.best_countries.map(c=>{const f=COUNTRIES.find(x=>x.code===c);return f?f.flag:c}).join(' ')}</div>`;
-      
-      // Inspired by
-      if (item.inspired_by) html += `<div class="inspired">💡 Inspired: ${item.inspired_by}</div>`;
-
-      // Hook
-      if (item.hook) {
-        const hookId = `hook_${i}`;
-        html += `<div class="hook-box"><div class="hook-label">HOOK</div><p class="hook-text">"${item.hook}"</p><button class="copy-btn" id="${hookId}" onclick="navigator.clipboard.writeText('${item.hook.replace(/'/g,"\\'")}').then(()=>{document.getElementById('${hookId}').textContent='✓';document.getElementById('${hookId}').classList.add('copied');setTimeout(()=>{document.getElementById('${hookId}').textContent='Copy';document.getElementById('${hookId}').classList.remove('copied')},1500)})">Copy</button></div>`;
+      h+=`</div>`;
+      if(it.network)h+=`<span class="ntag">${it.network}</span>`;
+      if(it.fb_format)h+=`<span class="tag" style="background:rgba(255,255,255,.1)">${it.fb_format}</span>`;
+      h+=`</div>`;
+      if(it.celeb_names?.length)h+=`<div style="margin-bottom:6px">${it.celeb_names.map(n=>`<span class="ctag">${n}</span>`).join('')}</div>`;
+      if(it.show_name)h+=`<div class="sn">📺 ${it.show_name}</div>`;
+      h+=`<h3>${it.title||''}</h3><p>${it.description||''}</p>`;
+      if(it.air_date&&it.air_date!=='TBA')h+=`<div class="ad">📅 ${it.air_date}</div>`;
+      if(it.visual_prompt)h+=`<div class="vp">🎨 ${it.visual_prompt}</div>`;
+      if(it.best_countries?.length)h+=`<div class="bc">🌍 Best: ${it.best_countries.map(x=>{const f=C.find(z=>z.code===x);return f?f.flag:x}).join(' ')}</div>`;
+      if(it.inspired_by)h+=`<div class="ins">💡 ${it.inspired_by}</div>`;
+      if(it.hook){
+        const hid=`h${i}`;
+        const safe=String(it.hook).replace(/'/g,"\\'").replace(/"/g,"&quot;");
+        h+=`<div class="hbox"><div class="hl">HOOK</div><p class="ht">"${it.hook}"</p><button class="cp" id="${hid}" onclick="navigator.clipboard.writeText('${safe}').then(()=>{const e=document.getElementById('${hid}');e.textContent='✓';e.classList.add('ok');setTimeout(()=>{e.textContent='Copy';e.classList.remove('ok')},1500)})">Copy</button></div>`;
       }
-
-      // Heat
-      const heat = item.heat || 50;
-      const hc = heat>80?"#ff2d55":heat>60?"#ff6b35":heat>40?"#ffb800":"#34c759";
-      html += `<div style="margin-top:auto;padding-top:6px"><div class="heat-wrap"><div class="heat-track"><div class="heat-fill" style="width:${heat}%;background:linear-gradient(90deg,${hc}88,${hc})"></div></div><span class="heat-num" style="color:${hc}">${heat}°</span></div>`;
-
-      // Source
-      const url = item.source_url || item.inspired_url;
-      const name = item.source_name || (item.inspired_url ? 'Trend gốc' : '');
-      if (url && url.startsWith('http')) {
-        const isFb = url.includes('facebook.com');
-        html += `<a class="source-btn" href="${url}" target="_blank" rel="noopener" style="background:${isFb?'rgba(24,119,242,0.1)':'rgba(0,122,255,0.08)'};border:1px solid ${isFb?'rgba(24,119,242,0.25)':'rgba(0,122,255,0.18)'};color:${isFb?'#4da3ff':'#6bb5ff'}">${isFb?'📘':'📄'} ${name||'Nguồn'} <span style="font-size:9px;opacity:0.6">↗</span></a>`;
+      const heat=it.heat||50;
+      const hc=heat>80?"#ff2d55":heat>60?"#ff6b35":heat>40?"#ffb800":"#34c759";
+      h+=`<div style="margin-top:auto;padding-top:6px"><div class="hw"><div class="htr"><div class="hf" style="width:${heat}%;background:linear-gradient(90deg,${hc}88,${hc})"></div></div><span class="hn" style="color:${hc}">${heat}°</span></div>`;
+      const url=it.source_url||it.inspired_url;
+      const nm=it.source_name||(it.inspired_url?'Trend gốc':'');
+      if(url&&String(url).startsWith('http')){
+        const fb=url.includes('facebook.com');
+        h+=`<a class="src" href="${url}" target="_blank" rel="noopener" style="background:${fb?'rgba(24,119,242,.1)':'rgba(0,122,255,.08)'};border:1px solid ${fb?'rgba(24,119,242,.25)':'rgba(0,122,255,.18)'};color:${fb?'#4da3ff':'#6bb5ff'}">${fb?'📘':'📄'} ${nm||'Nguồn'} ↗</a>`;
       }
-      html += `</div></div>`;
+      h+=`</div></div>`;
     });
-    html += `</div>`;
+    h+=`</div>`;
   }
 
-  // Empty
-  if (!state.loading && !state.error && state.searched && state.results.length === 0) {
-    html += `<div class="empty">Không tìm thấy. Thử lại hoặc đổi danh mục.</div>`;
-  }
-  if (!state.searched && !state.loading) {
-    html += `<div class="empty"><div class="big">${p.icon}</div><p style="font-size:14px">${state.pillar==='ai_stories'?'Bấm tìm để AI gợi ý câu chuyện viral':'Chọn quốc gia → danh mục → bấm Tìm'}</p><p style="font-size:11px;font-family:monospace;margin-top:4px">Deep Search · ~40-60s · Có nguồn bài báo gốc</p></div>`;
-  }
-
-  html += `<footer><p>Content Research Hub · Powered by Claude AI + Web Search</p></footer>`;
-  document.getElementById('app').innerHTML = html;
+  if(!S.ld&&!S.err&&S.srch&&S.res.length===0)h+=`<div class="empty">Không tìm thấy. Thử lại hoặc đổi danh mục.</div>`;
+  if(!S.srch&&!S.ld)h+=`<div class="empty"><div class="big">${p.icon}</div><p style="font-size:14px">${S.pl==='ai_stories'?'Bấm tìm để AI gợi ý câu chuyện viral':'Chọn quốc gia → danh mục → bấm Tìm'}</p><p style="font-size:11px;font-family:monospace;margin-top:4px">Deep Search · ~40-60s · Có nguồn bài báo gốc</p></div>`;
+  h+=`<footer><p>Content Research Hub · Powered by Claude AI + Web Search</p></footer>`;
+  document.getElementById('app').innerHTML=h;
 }
 
-// Close dropdown on outside click
-document.addEventListener('click', (e) => {
-  if (state.countryOpen && !e.target.closest('.country-wrap')) { state.countryOpen = false; render(); }
-});
-
+document.addEventListener('click',e=>{if(S.co&&!e.target.closest('.cw')){S.co=false;render()}});
 render();
 </script>
 </body>
