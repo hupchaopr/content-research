@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Research Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: rgba(255,255,255,0.04);
+    --card-hover: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0f0;
+    --text-dim: rgba(255,255,255,0.5);
+    --text-muted: rgba(255,255,255,0.3);
+    --accent-celeb: #ff2d55;
+    --accent-story: #af52de;
+    --accent-tv: #ff9500;
+    --blue: #1877f2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+  
+  /* Header */
+  .header { text-align: center; margin-bottom: 28px; }
+  .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; font-family: monospace; margin-bottom: 12px; }
+  .header h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 900; font-family: 'Playfair Display', Georgia, serif; background: linear-gradient(135deg, #fff, rgba(255,255,255,0.55)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; margin-bottom: 4px; }
+  .header p { color: var(--text-muted); font-size: 11px; font-family: monospace; }
+
+  /* API Key */
+  .api-section { text-align: center; margin-bottom: 20px; }
+  .api-toggle { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; color: var(--text-dim); font-size: 11px; cursor: pointer; font-family: monospace; transition: all 0.2s; }
+  .api-toggle:hover { background: rgba(255,255,255,0.08); }
+  .api-input-wrap { margin-top: 8px; display: flex; gap: 8px; justify-content: center; align-items: center; }
+  .api-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 14px; color: var(--text); font-size: 12px; font-family: monospace; width: 340px; outline: none; }
+  .api-input:focus { border-color: rgba(255,255,255,0.25); }
+  .api-save { background: rgba(52,199,89,0.15); border: 1px solid rgba(52,199,89,0.3); border-radius: 8px; padding: 8px 16px; color: #34c759; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .api-status { font-size: 10px; color: #34c759; margin-top: 4px; font-family: monospace; }
+  .api-cost { font-size: 10px; color: var(--text-muted); margin-top: 6px; font-family: monospace; }
+
+  /* Pillars */
+  .pillars { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .pillar-btn { display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .pillar-btn.active { color: #fff; font-weight: 700; }
+  .pillar-btn .icon { font-size: 18px; }
+  .pillar-btn .sub { font-size: 9px; opacity: 0.5; font-family: monospace; }
+
+  /* Country */
+  .country-wrap { display: flex; justify-content: center; margin-bottom: 12px; position: relative; }
+  .country-btn { display: flex; align-items: center; gap: 8px; padding: 9px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; min-width: 200px; justify-content: space-between; }
+  .country-dropdown { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); width: 220px; background: #16161f; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; max-height: 300px; overflow-y: auto; z-index: 100; box-shadow: 0 16px 48px rgba(0,0,0,0.6); margin-top: 4px; }
+  .country-item { display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 14px; background: transparent; border: none; color: var(--text); font-size: 12px; cursor: pointer; text-align: left; }
+  .country-item:hover { background: rgba(255,255,255,0.05); }
+  .country-item.active { background: rgba(255,255,255,0.08); }
+
+  /* Sub-categories */
+  .subcats { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 20px; }
+  .subcat-btn { display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-dim); font-size: 12px; cursor: pointer; transition: all 0.2s; }
+  .subcat-btn.active { color: #fff; font-weight: 700; }
+
+  /* Search */
+  .search-wrap { display: flex; justify-content: center; margin-bottom: 30px; }
+  .search-btn { padding: 13px 40px; border: none; border-radius: 12px; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+  .search-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Loading */
+  .loading { padding: 50px 0; text-align: center; }
+  .loading-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; margin-bottom: 16px; max-width: 320px; margin-left: auto; margin-right: auto; }
+  .loading-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+  .loading p { color: var(--text-dim); font-size: 14px; }
+  .loading .sub { color: var(--text-muted); font-size: 11px; font-family: monospace; margin-top: 4px; }
+
+  /* Results grid */
+  .results-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .results-header h2 { font-size: 16px; font-weight: 700; font-family: 'Playfair Display', serif; }
+  .results-header .meta { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
+
+  /* Card */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; transition: all 0.3s; display: flex; flex-direction: column; animation: fadeIn 0.4s ease both; }
+  .card:hover { background: var(--card-hover); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+  .card-num { font-size: 18px; font-weight: 900; color: rgba(255,255,255,0.1); font-family: monospace; }
+  .tag { display: inline-block; padding: 2px 8px; font-size: 9px; font-weight: 800; letter-spacing: 0.08em; color: #fff; border-radius: 3px; font-family: monospace; text-transform: uppercase; }
+  .celeb-tag { padding: 2px 8px; background: rgba(255,45,85,0.1); border: 1px solid rgba(255,45,85,0.2); border-radius: 12px; font-size: 11px; color: #ff7a9e; font-weight: 600; display: inline-block; margin: 0 4px 4px 0; }
+  .card h3 { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.35; font-family: 'Playfair Display', serif; margin-bottom: 6px; }
+  .card p { font-size: 12.5px; color: var(--text-dim); line-height: 1.55; }
+
+  /* Hook */
+  .hook-box { margin-top: 10px; padding: 8px 12px; background: rgba(24,119,242,0.07); border: 1px solid rgba(24,119,242,0.12); border-radius: 9px; position: relative; }
+  .hook-label { font-size: 8px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; font-family: monospace; }
+  .hook-text { font-size: 12.5px; color: rgba(255,255,255,0.75); font-style: italic; line-height: 1.4; padding-right: 46px; }
+  .copy-btn { position: absolute; right: 8px; top: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; padding: 3px 7px; font-size: 10px; color: rgba(255,255,255,0.4); cursor: pointer; font-family: monospace; }
+  .copy-btn.copied { background: rgba(52,199,89,0.2); color: #34c759; }
+
+  /* Heat bar */
+  .heat-wrap { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .heat-track { flex: 1; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+  .heat-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+  .heat-num { font-size: 11px; font-weight: 700; font-family: monospace; }
+
+  /* Source */
+  .source-btn { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+  .source-btn:hover { opacity: 0.85; }
+
+  /* Meta info */
+  .meta-tag { font-size: 11px; color: #ff9500; font-family: monospace; }
+  .show-name { font-size: 11px; font-weight: 700; color: #ff9500; font-family: monospace; margin-bottom: 4px; }
+  .air-date { font-size: 11px; color: #34c759; font-family: monospace; margin-top: 6px; }
+  .visual-prompt { margin-top: 8px; padding: 6px 10px; background: rgba(175,82,222,0.06); border-radius: 8px; font-size: 11px; color: var(--text-muted); font-family: monospace; }
+  .best-countries { margin-top: 6px; font-size: 11px; color: var(--text-muted); }
+  .inspired { margin-top: 6px; font-size: 11px; color: var(--text-muted); font-family: monospace; }
+  .network-tag { font-size: 10px; font-weight: 700; color: var(--text-dim); background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 4px; font-family: monospace; }
+
+  /* Error */
+  .error-box { text-align: center; padding: 24px; background: rgba(255,107,107,0.06); border-radius: 12px; border: 1px solid rgba(255,107,107,0.12); }
+  .error-box p { color: #ff6b6b; font-size: 13px; margin-bottom: 8px; }
+  .retry-btn { padding: 8px 20px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; font-size: 12px; cursor: pointer; }
+
+  /* Empty */
+  .empty { text-align: center; padding: 50px 20px; color: var(--text-muted); }
+  .empty .big { font-size: 48px; margin-bottom: 14px; }
+
+  /* Footer */
+  footer { margin-top: 50px; text-align: center; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.03); }
+  footer p { font-size: 10px; color: rgba(255,255,255,0.12); font-family: monospace; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container" id="app"></div>
+
+<script>
+/* ═══════════════ DATA ═══════════════ */
+const COUNTRIES = [
+  {code:"US",name:"United States",flag:"🇺🇸",lang:"English",region:"NA"},
+  {code:"UK",name:"United Kingdom",flag:"🇬🇧",lang:"English",region:"EU"},
+  {code:"DE",name:"Germany",flag:"🇩🇪",lang:"German",region:"EU"},
+  {code:"FR",name:"France",flag:"🇫🇷",lang:"French",region:"EU"},
+  {code:"IT",name:"Italy",flag:"🇮🇹",lang:"Italian",region:"EU"},
+  {code:"ES",name:"Spain",flag:"🇪🇸",lang:"Spanish",region:"EU"},
+  {code:"NL",name:"Netherlands",flag:"🇳🇱",lang:"Dutch",region:"EU"},
+  {code:"BE",name:"Belgium",flag:"🇧🇪",lang:"French/Dutch",region:"EU"},
+  {code:"PT",name:"Portugal",flag:"🇵🇹",lang:"Portuguese",region:"EU"},
+  {code:"SE",name:"Sweden",flag:"🇸🇪",lang:"Swedish",region:"EU"},
+  {code:"NO",name:"Norway",flag:"🇳🇴",lang:"Norwegian",region:"EU"},
+  {code:"DK",name:"Denmark",flag:"🇩🇰",lang:"Danish",region:"EU"},
+  {code:"PL",name:"Poland",flag:"🇵🇱",lang:"Polish",region:"EU"},
+  {code:"AT",name:"Austria",flag:"🇦🇹",lang:"German",region:"EU"},
+  {code:"CH",name:"Switzerland",flag:"🇨🇭",lang:"German/French",region:"EU"},
+  {code:"IE",name:"Ireland",flag:"🇮🇪",lang:"English",region:"EU"},
+  {code:"AU",name:"Australia",flag:"🇦🇺",lang:"English",region:"OC"},
+  {code:"CA",name:"Canada",flag:"🇨🇦",lang:"English/French",region:"NA"},
+  {code:"BR",name:"Brazil",flag:"🇧🇷",lang:"Portuguese",region:"SA"},
+  {code:"KR",name:"South Korea",flag:"🇰🇷",lang:"Korean",region:"AS"},
+  {code:"JP",name:"Japan",flag:"🇯🇵",lang:"Japanese",region:"AS"},
+  {code:"IN",name:"India",flag:"🇮🇳",lang:"English/Hindi",region:"AS"},
+  {code:"VN",name:"Vietnam",flag:"🇻🇳",lang:"Vietnamese",region:"AS"},
+  {code:"TH",name:"Thailand",flag:"🇹🇭",lang:"Thai",region:"AS"},
+  {code:"PH",name:"Philippines",flag:"🇵🇭",lang:"English/Filipino",region:"AS"},
+];
+
+const EU_T1 = ["UK","DE","FR","IT","ES","NL","SE","NO","DK","CH","AT","IE","BE"];
+
+const PILLARS = [
+  {id:"celebs",label:"Celebs & Người nổi tiếng",icon:"💍",desc:"Kết hôn · ly hôn · scandal",color:"#ff2d55"},
+  {id:"ai_stories",label:"AI Viral Stories",icon:"✨",desc:"Câu chuyện viral cho EU",color:"#af52de"},
+  {id:"tv_shows",label:"TV Shows & Reality",icon:"📺",desc:"Reality TV · Series · Soap",color:"#ff9500"},
+];
+
+const CELEB_SUBS = [
+  {id:"all",label:"Tất cả",icon:"🔥"},{id:"marriage",label:"Kết hôn",icon:"💒"},
+  {id:"divorce",label:"Ly hôn",icon:"💔"},{id:"baby",label:"Sinh con",icon:"👶"},
+  {id:"scandal",label:"Scandal",icon:"😱"},{id:"dating",label:"Hẹn hò",icon:"❤️"},
+];
+const TV_SUBS = [
+  {id:"all_tv",label:"Tất cả",icon:"🔥"},{id:"reality",label:"Reality TV",icon:"🎪"},
+  {id:"soap",label:"Soap Opera",icon:"🎭"},{id:"series",label:"Series mùa",icon:"📅"},
+  {id:"upcoming",label:"Sắp ra mắt",icon:"🆕"},{id:"cast_news",label:"Tin diễn viên",icon:"🌟"},
+];
+
+/* ═══════════════ STATE ═══════════════ */
+let state = {
+  apiKey: localStorage.getItem("crh_api_key") || "",
+  showApiInput: false,
+  pillar: "celebs",
+  subCat: "all",
+  countryIdx: 0,
+  countryOpen: false,
+  results: [],
+  loading: false,
+  error: null,
+  searched: false,
+  elapsed: 0,
+  tokenCost: null,
+};
+let timer = null;
+
+function getCountry() { return COUNTRIES[state.countryIdx]; }
+function getPillar() { return PILLARS.find(p => p.id === state.pillar); }
+function getSubCats() { return state.pillar === "celebs" ? CELEB_SUBS : state.pillar === "tv_shows" ? TV_SUBS : null; }
+
+/* ═══════════════ PROMPT BUILDER (same as artifact) ═══════════════ */
+function buildPrompt(country, pillar, subCat) {
+  const langRule = `ALL text fields (title, description, hook) MUST be written in ${country.lang}.`;
+  const base = `You are a senior Facebook content researcher for ${country.name}. Search the web thoroughly.
+RULES:
+- ${langRule}
+- Every item MUST have "source_url": a REAL working URL. CRITICAL.
+- Prefer major news outlets, entertainment sites, official pages.
+- Output ONLY a valid JSON array. No markdown, no explanations.
+- Never refuse. Provide best findings even if uncertain.
+- Use LOCAL celebrities/shows of ${country.name}.`;
+
+  if (pillar === "celebs") {
+    const m = {all:"ALL celebrity life events",marriage:"MARRIAGES, ENGAGEMENTS",divorce:"DIVORCES, BREAKUPS",baby:"PREGNANCIES, BIRTHS",scandal:"SCANDALS, controversies",dating:"NEW RELATIONSHIPS, dating"};
+    return `${base}\n\nFind TOP 8 celebrity news in ${country.name}: ${m[subCat]}.\n\nEach item: "title" (${country.lang}, max 15 words), "description" (${country.lang}, 2-3 sentences), "heat" (1-100), "type" (breaking/rising/hot/new), "celeb_names" (array), "event_type" (marriage/divorce/baby/scandal/dating/other), "source_url" (real URL), "source_name", "hook" (${country.lang}, max 20 words), "fb_format" (reel/carousel/discussion/photo)\n\n[{"title":"...","description":"...","heat":90,"type":"hot","celeb_names":["..."],"event_type":"marriage","source_url":"https://...","source_name":"...","hook":"...","fb_format":"carousel"}]`;
+  }
+  if (pillar === "ai_stories") {
+    return `${base}\n\nGenerate 8 VIRAL STORY IDEAS for European Facebook audiences (UK,DE,FR,IT,ES,NL,SE). Stories will be written by AI with AI images.\n\nTypes: rescued animal saves owner, elderly kindness, child changes community, lost pet reunion, homeless talent, soldier surprise, unlikely friendships, pay-it-forward.\n\nEach: "title" (English, max 15 words), "description" (English, 3-4 sentence outline), "heat" (1-100), "type" (heartwarming/inspiring/emotional/surprising/reunion), "visual_prompt" (1 sentence for AI image), "target_emotion" (tears/joy/hope/shock/nostalgia/pride), "inspired_by", "inspired_url" (real URL if found), "hook" (English, max 20 words), "fb_format" (carousel/reel/photo), "best_countries" (array of 3-5 EU codes)\n\n[{"title":"...","description":"...","heat":90,"type":"heartwarming","visual_prompt":"...","target_emotion":"tears","inspired_by":"...","inspired_url":"...","hook":"...","fb_format":"carousel","best_countries":["UK","DE"]}]`;
+  }
+  if (pillar === "tv_shows") {
+    const m = {all_tv:"ALL: reality, soap, drama, upcoming, cast",reality:"REALITY TV shows",soap:"SOAP OPERAS, long-running dramas",series:"TV SERIES new seasons",upcoming:"UPCOMING premieres next 1-4 weeks",cast_news:"CAST NEWS, actor updates"};
+    return `${base}\n\nFind TOP 8 TV show news in ${country.name}: ${m[subCat]}. Prioritize Reality TV, soap operas, series with active fans.\n\nEach: "title" (${country.lang}, max 15 words), "description" (${country.lang}, 2-3 sentences with show name, network, dates), "heat" (1-100), "type" (breaking/rising/hot/new), "show_name", "network", "show_type" (reality/soap/drama_series/comedy/competition/documentary), "source_url" (real URL), "source_name", "hook" (${country.lang}, max 20 words), "fb_format" (reel/carousel/discussion/link_post), "air_date" (if applicable)\n\n[{"title":"...","description":"...","heat":90,"type":"hot","show_name":"...","network":"Netflix","show_type":"reality","source_url":"https://...","source_name":"...","hook":"...","fb_format":"discussion","air_date":"March 20, 2026"}]`;
+  }
+  return "";
+}
+
+function extractJSON(text) {
+  if (!text) return null;
+  const c = text.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
+  try { return JSON.parse(c); } catch {}
+  const m = c.match(/\[[\s\S]*\]/);
+  if (m) { try { return JSON.parse(m[0]); } catch {} try { return JSON.parse(m[0].replace(/,\s*]/g,"]").replace(/,\s*}/g,"}")); } catch {} }
+  const s = c.indexOf("["), e = c.lastIndexOf("]");
+  if (s !== -1 && e > s) try { return JSON.parse(c.slice(s, e+1)); } catch {}
+  return null;
+}
+
+/* ═══════════════ API CALL ═══════════════ */
+async function doSearch() {
+  if (!state.apiKey) { state.showApiInput = true; state.error = "Vui lòng nhập API key trước"; render(); return; }
+  state.loading = true; state.error = null; state.results = []; state.searched = true; state.elapsed = 0; state.tokenCost = null;
+  render();
+  timer = setInterval(() => { state.elapsed += 0.5; render(); }, 500);
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-api-key": state.apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 3000,
+        system: "You are a JSON API. Output ONLY valid JSON arrays. Never explain, never refuse, never use markdown.",
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        messages: [{ role: "user", content: buildPrompt(getCountry(), state.pillar, state.subCat) }],
+      }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+
+    // Calculate token cost
+    const usage = data.usage || {};
+    const inTokens = usage.input_tokens || 0;
+    const outTokens = usage.output_tokens || 0;
+    const cost = (inTokens * 0.003 / 1000) + (outTokens * 0.015 / 1000);
+    state.tokenCost = { input: inTokens, output: outTokens, cost: cost.toFixed(4) };
+
+    const fullText = (data.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
+    const parsed = extractJSON(fullText);
+    if (Array.isArray(parsed) && parsed.length > 0) state.results = parsed.slice(0, 8);
+    else state.error = "Không parse được kết quả. Thử lại.";
+  } catch (err) {
+    state.error = err.message || "Lỗi kết nối";
+  } finally {
+    state.loading = false;
+    clearInterval(timer);
+    render();
+  }
+}
+
+/* ═══════════════ RENDER ═══════════════ */
+function render() {
+  const p = getPillar();
+  const country = getCountry();
+  const subs = getSubCats();
+  const showCountry = state.pillar !== "ai_stories";
+
+  let html = `
+    <header class="header">
+      <div class="badge" style="background:${p.color}18;border:1px solid ${p.color}33;color:${p.color}">● Deep Search · Facebook Content</div>
+      <h1>Content Research Hub</h1>
+      <p>AI + Web Search · Nguồn bài báo gốc · Tối ưu Facebook</p>
+    </header>
+
+    <!-- API Key -->
+    <div class="api-section">
+      ${state.apiKey && !state.showApiInput
+        ? `<button class="api-toggle" onclick="state.showApiInput=true;render()">🔑 API Key: ****${state.apiKey.slice(-6)} · Đổi key</button>`
+        : `<button class="api-toggle" onclick="state.showApiInput=!state.showApiInput;render()">🔑 ${state.showApiInput ? 'Ẩn' : 'Nhập'} API Key Anthropic</button>`}
+      ${state.showApiInput ? `
+        <div class="api-input-wrap">
+          <input class="api-input" type="password" placeholder="sk-ant-api..." value="${state.apiKey}" id="apiInput">
+          <button class="api-save" onclick="state.apiKey=document.getElementById('apiInput').value;localStorage.setItem('crh_api_key',state.apiKey);state.showApiInput=false;render()">Lưu</button>
+        </div>
+        <div class="api-cost">💰 ~$0.03-0.08/lần search · Lấy key tại <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#4da3ff">console.anthropic.com</a></div>
+      ` : ''}
+      ${state.apiKey && !state.showApiInput ? '<div class="api-status">✓ Đã kết nối</div>' : ''}
+    </div>
+
+    <!-- Pillars -->
+    <div class="pillars">
+      ${PILLARS.map(pl => `
+        <button class="pillar-btn ${state.pillar===pl.id?'active':''}" 
+          style="${state.pillar===pl.id ? `background:${pl.color}20;border-color:${pl.color}40` : ''}"
+          onclick="state.pillar='${pl.id}';state.subCat='${pl.id==='celebs'?'all':pl.id==='tv_shows'?'all_tv':''}';state.results=[];state.searched=false;state.error=null;render()">
+          <span class="icon">${pl.icon}</span>
+          <div><div>${pl.label}</div><div class="sub">${pl.desc}</div></div>
+        </button>
+      `).join('')}
+    </div>
+
+    <!-- Country -->
+    ${showCountry ? `
+    <div class="country-wrap">
+      <button class="country-btn" onclick="state.countryOpen=!state.countryOpen;render()">
+        <span>${country.flag} ${country.name}</span>
+        <span style="font-size:9px;opacity:0.4">▼</span>
+      </button>
+      ${state.countryOpen ? `
+        <div class="country-dropdown">
+          ${COUNTRIES.map((c,i) => `
+            <button class="country-item ${i===state.countryIdx?'active':''}" onclick="state.countryIdx=${i};state.countryOpen=false;render()">
+              <span style="font-size:16px">${c.flag}</span> ${c.name}
+              ${EU_T1.includes(c.code)?'<span style="font-size:8px;color:#34c759;font-family:monospace;margin-left:auto">EU T1</span>':''}
+            </button>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>` : ''}
+
+    <!-- Sub-cats -->
+    ${subs ? `
+    <div class="subcats">
+      ${subs.map(s => `
+        <button class="subcat-btn ${state.subCat===s.id?'active':''}"
+          style="${state.subCat===s.id ? `background:${p.color}20;border-color:${p.color}35` : ''}"
+          onclick="state.subCat='${s.id}';render()">
+          <span style="font-size:13px">${s.icon}</span> ${s.label}
+        </button>
+      `).join('')}
+    </div>` : ''}
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <button class="search-btn" ${state.loading?'disabled':''} 
+        style="background:${state.loading?'rgba(255,255,255,0.05)':`linear-gradient(135deg,${p.color},${p.color}cc)`};box-shadow:${state.loading?'none':`0 4px 20px ${p.color}40`}"
+        onclick="doSearch()">
+        ${state.loading ? 'Đang tìm kiếm...' : `🔍 Tìm ${p.label}`}
+      </button>
+    </div>
+  `;
+
+  // Loading
+  if (state.loading) {
+    const est = 50, pct = Math.min((state.elapsed/est)*100, 96);
+    const steps = ["Khởi tạo AI...","Tìm kiếm web...","Đọc nguồn...","Phân tích...","Tạo kết quả..."];
+    const si = Math.min(Math.floor((state.elapsed/est)*steps.length), steps.length-1);
+    html += `<div class="loading"><div class="loading-bar"><div class="loading-fill" style="width:${pct}%;background:linear-gradient(90deg,#ff9500,#ff6b35)"></div></div><p>${steps[si]}</p><p class="sub">${Math.round(state.elapsed)}s / ~${est}s 🔍</p></div>`;
+  }
+
+  // Error
+  if (state.error) {
+    html += `<div class="error-box"><p>⚠️ ${state.error}</p><button class="retry-btn" onclick="doSearch()">🔄 Thử lại</button></div>`;
+  }
+
+  // Results
+  if (!state.loading && state.results.length > 0) {
+    html += `<div class="results-header">
+      ${showCountry?`<span style="font-size:22px">${country.flag}</span>`:''}
+      <span style="font-size:20px">${p.icon}</span>
+      <div>
+        <h2>${showCountry?country.name:'EU Tier 1-2'} · ${p.label}</h2>
+        <div class="meta">${state.results.length} kết quả · 🔍 Deep Search${state.tokenCost?` · 💰 $${state.tokenCost.cost}`:''}</div>
+      </div>
+    </div><div class="grid">`;
+
+    state.results.forEach((item, i) => {
+      const delay = i * 0.06;
+      html += `<div class="card" style="animation-delay:${delay}s;border-color:${p.color}18">`;
+      
+      // Card top
+      html += `<div class="card-top"><div style="display:flex;align-items:center;gap:8px"><span class="card-num">${String(i+1).padStart(2,'0')}</span>`;
+      
+      if (state.pillar === 'celebs') {
+        const ec = {marriage:"#34c759",divorce:"#ff6b6b",baby:"#ffb800",scandal:"#ff2d55",dating:"#ff69b4",other:"#888"};
+        const el = {marriage:"💒 KẾT HÔN",divorce:"💔 LY HÔN",baby:"👶 SINH CON",scandal:"😱 SCANDAL",dating:"❤️ HẸN HÒ",other:"📰 TIN MỚI"};
+        html += `<span class="tag" style="background:${ec[item.event_type]||'#888'}">${el[item.event_type]||el.other}</span>`;
+      } else if (state.pillar === 'tv_shows') {
+        const tc = {breaking:"#ff2d55",new:"#5856d6",rising:"#ff9500",hot:"#ff6b35"};
+        html += `<span class="tag" style="background:${tc[item.type]||'#ff9500'}">${(item.type||'hot').toUpperCase()}</span>`;
+        if (item.show_type) html += `<span class="tag" style="background:rgba(255,255,255,0.15)">${item.show_type.replace('_',' ')}</span>`;
+      } else {
+        const ti = {heartwarming:"💖",inspiring:"🌟",emotional:"😢",surprising:"😲",reunion:"🤝"};
+        html += `<span style="font-size:16px">${ti[item.type]||'✨'}</span><span class="tag" style="background:#af52de">${item.type||'story'}</span>`;
+        if (item.target_emotion) html += `<span class="tag" style="background:rgba(255,255,255,0.15)">🎭 ${item.target_emotion}</span>`;
+      }
+      html += `</div>`;
+      if (item.network) html += `<span class="network-tag">${item.network}</span>`;
+      if (item.fb_format) html += `<span class="tag" style="background:rgba(255,255,255,0.1)">${item.fb_format}</span>`;
+      html += `</div>`;
+
+      // Celeb names
+      if (item.celeb_names?.length) html += `<div style="margin-bottom:6px">${item.celeb_names.map(n=>`<span class="celeb-tag">${n}</span>`).join('')}</div>`;
+      
+      // Show name
+      if (item.show_name) html += `<div class="show-name">📺 ${item.show_name}</div>`;
+
+      // Title + desc
+      html += `<h3>${item.title||''}</h3><p>${item.description||''}</p>`;
+
+      // Air date
+      if (item.air_date && item.air_date !== 'TBA') html += `<div class="air-date">📅 ${item.air_date}</div>`;
+      
+      // Visual prompt
+      if (item.visual_prompt) html += `<div class="visual-prompt">🎨 ${item.visual_prompt}</div>`;
+      
+      // Best countries
+      if (item.best_countries?.length) html += `<div class="best-countries">🌍 Best: ${item.best_countries.map(c=>{const f=COUNTRIES.find(x=>x.code===c);return f?f.flag:c}).join(' ')}</div>`;
+      
+      // Inspired by
+      if (item.inspired_by) html += `<div class="inspired">💡 Inspired: ${item.inspired_by}</div>`;
+
+      // Hook
+      if (item.hook) {
+        const hookId = `hook_${i}`;
+        html += `<div class="hook-box"><div class="hook-label">HOOK</div><p class="hook-text">"${item.hook}"</p><button class="copy-btn" id="${hookId}" onclick="navigator.clipboard.writeText('${item.hook.replace(/'/g,"\\'")}').then(()=>{document.getElementById('${hookId}').textContent='✓';document.getElementById('${hookId}').classList.add('copied');setTimeout(()=>{document.getElementById('${hookId}').textContent='Copy';document.getElementById('${hookId}').classList.remove('copied')},1500)})">Copy</button></div>`;
+      }
+
+      // Heat
+      const heat = item.heat || 50;
+      const hc = heat>80?"#ff2d55":heat>60?"#ff6b35":heat>40?"#ffb800":"#34c759";
+      html += `<div style="margin-top:auto;padding-top:6px"><div class="heat-wrap"><div class="heat-track"><div class="heat-fill" style="width:${heat}%;background:linear-gradient(90deg,${hc}88,${hc})"></div></div><span class="heat-num" style="color:${hc}">${heat}°</span></div>`;
+
+      // Source
+      const url = item.source_url || item.inspired_url;
+      const name = item.source_name || (item.inspired_url ? 'Trend gốc' : '');
+      if (url && url.startsWith('http')) {
+        const isFb = url.includes('facebook.com');
+        html += `<a class="source-btn" href="${url}" target="_blank" rel="noopener" style="background:${isFb?'rgba(24,119,242,0.1)':'rgba(0,122,255,0.08)'};border:1px solid ${isFb?'rgba(24,119,242,0.25)':'rgba(0,122,255,0.18)'};color:${isFb?'#4da3ff':'#6bb5ff'}">${isFb?'📘':'📄'} ${name||'Nguồn'} <span style="font-size:9px;opacity:0.6">↗</span></a>`;
+      }
+      html += `</div></div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Empty
+  if (!state.loading && !state.error && state.searched && state.results.length === 0) {
+    html += `<div class="empty">Không tìm thấy. Thử lại hoặc đổi danh mục.</div>`;
+  }
+  if (!state.searched && !state.loading) {
+    html += `<div class="empty"><div class="big">${p.icon}</div><p style="font-size:14px">${state.pillar==='ai_stories'?'Bấm tìm để AI gợi ý câu chuyện viral':'Chọn quốc gia → danh mục → bấm Tìm'}</p><p style="font-size:11px;font-family:monospace;margin-top:4px">Deep Search · ~40-60s · Có nguồn bài báo gốc</p></div>`;
+  }
+
+  html += `<footer><p>Content Research Hub · Powered by Claude AI + Web Search</p></footer>`;
+  document.getElementById('app').innerHTML = html;
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', (e) => {
+  if (state.countryOpen && !e.target.closest('.country-wrap')) { state.countryOpen = false; render(); }
+});
+
+render();
+</script>
+</body>
+</html>
