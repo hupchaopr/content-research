@@ -2,275 +2,394 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Content Research Hub</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='28' font-size='28'>🔍</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0a0a0f; --card:rgba(255,255,255,0.04); --card-h:rgba(255,255,255,0.07); --bdr:rgba(255,255,255,0.08); --t:#f0f0f0; --td:rgba(255,255,255,0.5); --tm:rgba(255,255,255,0.3); --red:#ff2d55; --purple:#af52de; --orange:#ff9500; --blue:#1877f2; --green:#34c759; }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--t);font-family:'DM Sans',sans-serif;min-height:100vh}
-  .container{max-width:900px;margin:0 auto;padding:32px 20px}
-  .header{text-align:center;margin-bottom:28px}
-  .badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-family:monospace;margin-bottom:12px}
-  .header h1{font-size:clamp(26px,5vw,40px);font-weight:900;font-family:'Playfair Display',Georgia,serif;background:linear-gradient(135deg,#fff,rgba(255,255,255,.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:4px}
-  .header p{color:var(--tm);font-size:11px;font-family:monospace}
-  .pillars{display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-  .pill{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;border:1px solid var(--bdr);background:rgba(255,255,255,.03);color:var(--td);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
-  .pill.on{color:#fff;font-weight:700}
-  .pill .ic{font-size:18px}
-  .pill .sub{font-size:9px;opacity:.5;font-family:monospace}
-  .cw{display:flex;justify-content:center;margin-bottom:12px;position:relative}
-  .cbtn{display:flex;align-items:center;gap:8px;padding:9px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--t);font-size:13px;font-weight:600;cursor:pointer;min-width:200px;justify-content:space-between}
-  .cdd{position:absolute;top:100%;left:50%;transform:translateX(-50%);width:240px;background:#16161f;border:1px solid rgba(255,255,255,.1);border-radius:10px;max-height:320px;overflow-y:auto;z-index:100;box-shadow:0 16px 48px rgba(0,0,0,.6);margin-top:4px}
-  .ci{display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;background:transparent;border:none;color:var(--t);font-size:12px;cursor:pointer;text-align:left}
-  .ci:hover{background:rgba(255,255,255,.05)}
-  .ci.on{background:rgba(255,255,255,.08)}
-  .subs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px}
-  .sb{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1px solid var(--bdr);background:rgba(255,255,255,.03);color:var(--td);font-size:12px;cursor:pointer;transition:all .2s}
-  .sb.on{color:#fff;font-weight:700}
-  .sw{display:flex;justify-content:center;margin-bottom:30px}
-  .go{padding:13px 40px;border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px}
-  .go:disabled{opacity:.4;cursor:not-allowed}
-  .ld{padding:50px 0;text-align:center}
-  .lbar{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto}
-  .lfill{height:100%;border-radius:2px;transition:width .5s ease}
-  .ld p{color:var(--td);font-size:14px}
-  .ld .s2{color:var(--tm);font-size:11px;font-family:monospace;margin-top:4px}
-  .rh{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06)}
-  .rh h2{font-size:16px;font-weight:700;font-family:'Playfair Display',serif}
-  .rh .mt{font-size:11px;color:var(--tm);font-family:monospace}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}
-  .card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:18px 20px;transition:all .3s;display:flex;flex-direction:column;animation:fi .4s ease both}
-  .card:hover{background:var(--card-h);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
-  .ct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:6px}
-  .cn{font-size:18px;font-weight:900;color:rgba(255,255,255,.1);font-family:monospace}
-  .tag{display:inline-block;padding:2px 8px;font-size:9px;font-weight:800;letter-spacing:.08em;color:#fff;border-radius:3px;font-family:monospace;text-transform:uppercase}
-  .ctag{padding:2px 8px;background:rgba(255,45,85,.1);border:1px solid rgba(255,45,85,.2);border-radius:12px;font-size:11px;color:#ff7a9e;font-weight:600;display:inline-block;margin:0 4px 4px 0}
-  .card h3{font-size:15px;font-weight:700;color:var(--t);line-height:1.35;font-family:'Playfair Display',serif;margin-bottom:6px}
-  .card p{font-size:12.5px;color:var(--td);line-height:1.55}
-  .hbox{margin-top:10px;padding:8px 12px;background:rgba(24,119,242,.07);border:1px solid rgba(24,119,242,.12);border-radius:9px;position:relative}
-  .hl{font-size:8px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;font-family:monospace}
-  .ht{font-size:12.5px;color:rgba(255,255,255,.75);font-style:italic;line-height:1.4;padding-right:46px}
-  .cp{position:absolute;right:8px;top:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:3px 7px;font-size:10px;color:rgba(255,255,255,.4);cursor:pointer;font-family:monospace}
-  .cp.ok{background:rgba(52,199,89,.2);color:#34c759}
-  .hw{display:flex;align-items:center;gap:8px;margin-top:6px}
-  .htr{flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-  .hf{height:100%;border-radius:2px;transition:width 1s ease}
-  .hn{font-size:11px;font-weight:700;font-family:monospace}
-  .src{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;text-decoration:none;transition:all .2s}
-  .src:hover{opacity:.85}
-  .sn{font-size:11px;font-weight:700;color:var(--orange);font-family:monospace;margin-bottom:4px}
-  .ad{font-size:11px;color:var(--green);font-family:monospace;margin-top:6px}
-  .vp{margin-top:8px;padding:6px 10px;background:rgba(175,82,222,.06);border-radius:8px;font-size:11px;color:var(--tm);font-family:monospace}
-  .bc{margin-top:6px;font-size:11px;color:var(--tm)}
-  .ins{margin-top:6px;font-size:11px;color:var(--tm);font-family:monospace}
-  .ntag{font-size:10px;font-weight:700;color:var(--td);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;font-family:monospace}
-  .ebox{text-align:center;padding:24px;background:rgba(255,107,107,.06);border-radius:12px;border:1px solid rgba(255,107,107,.12)}
-  .ebox p{color:#ff6b6b;font-size:13px;margin-bottom:8px}
-  .rb{padding:8px 20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;cursor:pointer}
-  .empty{text-align:center;padding:50px 20px;color:var(--tm)}
-  .empty .big{font-size:48px;margin-bottom:14px}
-  footer{margin-top:50px;text-align:center;padding:16px 0;border-top:1px solid rgba(255,255,255,.03)}
-  footer p{font-size:10px;color:rgba(255,255,255,.12);font-family:monospace}
-  @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  @media(max-width:500px){.grid{grid-template-columns:1fr}}
+:root{--bg:#0a0a0f;--card:rgba(255,255,255,.04);--ch:rgba(255,255,255,.07);--bd:rgba(255,255,255,.08);--t:#f0f0f0;--td:rgba(255,255,255,.5);--tm:rgba(255,255,255,.3)}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--t);font-family:'DM Sans',sans-serif;min-height:100vh}
+.ct{max-width:900px;margin:0 auto;padding:32px 20px}
+.hd{text-align:center;margin-bottom:24px}
+.badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-family:monospace;margin-bottom:12px}
+.hd h1{font-size:clamp(26px,5vw,40px);font-weight:900;font-family:'Playfair Display',Georgia,serif;background:linear-gradient(135deg,#fff,rgba(255,255,255,.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:4px}
+.hd p{color:var(--tm);font-size:11px;font-family:monospace}
+/* API Key */
+.api-box{text-align:center;margin-bottom:20px}
+.api-toggle{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:8px;padding:6px 14px;color:var(--td);font-size:11px;cursor:pointer;font-family:monospace;transition:all .2s}
+.api-toggle:hover{background:rgba(255,255,255,.08)}
+.api-row{margin-top:8px;display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+.api-in{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;color:var(--t);font-size:12px;font-family:monospace;width:340px;outline:none}
+.api-in:focus{border-color:rgba(255,255,255,.25)}
+.api-save{background:rgba(52,199,89,.15);border:1px solid rgba(52,199,89,.3);border-radius:8px;padding:8px 16px;color:#34c759;font-size:12px;font-weight:700;cursor:pointer}
+.api-ok{font-size:10px;color:#34c759;margin-top:4px;font-family:monospace}
+.api-cost{font-size:10px;color:var(--tm);margin-top:6px;font-family:monospace}
+.api-cost a{color:#4da3ff}
+/* Pillars */
+.pls{display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.pl{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;border:1px solid var(--bd);background:rgba(255,255,255,.03);color:var(--td);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.pl.on{color:#fff;font-weight:700}
+/* Country */
+.cw{display:flex;justify-content:center;margin-bottom:12px;position:relative}
+.cbtn{display:flex;align-items:center;gap:8px;padding:9px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--t);font-size:13px;font-weight:600;cursor:pointer;min-width:200px;justify-content:space-between}
+.cdd{position:absolute;top:100%;left:50%;transform:translateX(-50%);width:240px;background:#16161f;border:1px solid rgba(255,255,255,.1);border-radius:10px;max-height:320px;overflow-y:auto;z-index:100;box-shadow:0 16px 48px rgba(0,0,0,.6);margin-top:4px}
+.ci{display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;background:transparent;border:none;color:var(--t);font-size:12px;cursor:pointer;text-align:left}
+.ci:hover{background:rgba(255,255,255,.05)}.ci.on{background:rgba(255,255,255,.08)}
+/* Subcats */
+.scs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px}
+.sc{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1px solid var(--bd);background:rgba(255,255,255,.03);color:var(--td);font-size:12px;cursor:pointer;transition:all .2s}
+.sc.on{color:#fff;font-weight:700}
+/* Button */
+.sw{display:flex;justify-content:center;margin-bottom:30px}
+.go{padding:13px 40px;border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px}
+.go:disabled{opacity:.4;cursor:not-allowed}
+/* Loading */
+.ld{padding:50px 0;text-align:center}
+.lb{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto}
+.lf{height:100%;border-radius:2px;transition:width .5s ease}
+/* Results */
+.rh{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06)}
+.rh h2{font-size:16px;font-weight:700;font-family:'Playfair Display',serif}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px 20px;transition:all .3s;display:flex;flex-direction:column;animation:fi .4s ease both}
+.card:hover{background:var(--ch);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.tag{display:inline-block;padding:2px 8px;font-size:9px;font-weight:800;letter-spacing:.08em;color:#fff;border-radius:3px;font-family:monospace;text-transform:uppercase}
+.ctag{padding:2px 8px;background:rgba(255,45,85,.1);border:1px solid rgba(255,45,85,.2);border-radius:12px;font-size:11px;color:#ff7a9e;font-weight:600;display:inline-block;margin:0 4px 4px 0}
+.card h3{font-size:15px;font-weight:700;color:var(--t);line-height:1.35;font-family:'Playfair Display',serif;margin-bottom:6px}
+.card>p{font-size:12.5px;color:var(--td);line-height:1.55}
+.hb{margin-top:10px;padding:8px 12px;background:rgba(24,119,242,.07);border:1px solid rgba(24,119,242,.12);border-radius:9px;position:relative}
+.src{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;text-decoration:none;transition:all .2s;background:rgba(0,122,255,.08);border:1px solid rgba(0,122,255,.18);color:#6bb5ff}
+.src:hover{opacity:.85}
+.eb{text-align:center;padding:24px;background:rgba(255,107,107,.06);border-radius:12px;border:1px solid rgba(255,107,107,.12)}
+.eb p{color:#ff6b6b;font-size:13px;margin-bottom:8px}
+.rb{padding:8px 20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;cursor:pointer}
+.empty{text-align:center;padding:50px 20px;color:var(--tm)}
+footer{margin-top:50px;text-align:center;padding:16px 0;border-top:1px solid rgba(255,255,255,.03)}
+footer p{font-size:10px;color:rgba(255,255,255,.12);font-family:monospace}
+@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:500px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="container" id="app"></div>
-
+<div class="ct" id="app"></div>
 <script>
-/*╔═══════════════════════════════════════════════════════╗
-  ║  ĐỔI URL NÀY THÀNH WORKER URL CỦA ANH              ║
-  ╚═══════════════════════════════════════════════════════╝*/
-const WORKER_URL = "https://crh-proxyresearch.hupchaopr.workers.dev";
-/*  Ví dụ: "https://crh-proxy.johndoe.workers.dev"       */
-
-/* ═══ DATA ═══ */
-const C=[
-  {code:"US",name:"United States",flag:"🇺🇸",lang:"English",r:"NA"},
-  {code:"UK",name:"United Kingdom",flag:"🇬🇧",lang:"English",r:"EU"},
-  {code:"DE",name:"Germany",flag:"🇩🇪",lang:"German",r:"EU"},
-  {code:"FR",name:"France",flag:"🇫🇷",lang:"French",r:"EU"},
-  {code:"IT",name:"Italy",flag:"🇮🇹",lang:"Italian",r:"EU"},
-  {code:"ES",name:"Spain",flag:"🇪🇸",lang:"Spanish",r:"EU"},
-  {code:"NL",name:"Netherlands",flag:"🇳🇱",lang:"Dutch",r:"EU"},
-  {code:"BE",name:"Belgium",flag:"🇧🇪",lang:"French/Dutch",r:"EU"},
-  {code:"PT",name:"Portugal",flag:"🇵🇹",lang:"Portuguese",r:"EU"},
-  {code:"SE",name:"Sweden",flag:"🇸🇪",lang:"Swedish",r:"EU"},
-  {code:"NO",name:"Norway",flag:"🇳🇴",lang:"Norwegian",r:"EU"},
-  {code:"DK",name:"Denmark",flag:"🇩🇰",lang:"Danish",r:"EU"},
-  {code:"PL",name:"Poland",flag:"🇵🇱",lang:"Polish",r:"EU"},
-  {code:"AT",name:"Austria",flag:"🇦🇹",lang:"German",r:"EU"},
-  {code:"CH",name:"Switzerland",flag:"🇨🇭",lang:"German/French",r:"EU"},
-  {code:"IE",name:"Ireland",flag:"🇮🇪",lang:"English",r:"EU"},
-  {code:"AU",name:"Australia",flag:"🇦🇺",lang:"English",r:"OC"},
-  {code:"CA",name:"Canada",flag:"🇨🇦",lang:"English/French",r:"NA"},
-  {code:"BR",name:"Brazil",flag:"🇧🇷",lang:"Portuguese",r:"SA"},
-  {code:"KR",name:"South Korea",flag:"🇰🇷",lang:"Korean",r:"AS"},
-  {code:"JP",name:"Japan",flag:"🇯🇵",lang:"Japanese",r:"AS"},
-  {code:"IN",name:"India",flag:"🇮🇳",lang:"English/Hindi",r:"AS"},
-  {code:"VN",name:"Vietnam",flag:"🇻🇳",lang:"Vietnamese",r:"AS"},
-  {code:"TH",name:"Thailand",flag:"🇹🇭",lang:"Thai",r:"AS"},
-  {code:"PH",name:"Philippines",flag:"🇵🇭",lang:"English/Filipino",r:"AS"},
+/* ══════════════════════════════════════════
+   DATA
+   ══════════════════════════════════════════ */
+var C=[
+{c:"US",n:"United States",f:"\u{1F1FA}\u{1F1F8}",l:"English"},
+{c:"UK",n:"United Kingdom",f:"\u{1F1EC}\u{1F1E7}",l:"English"},
+{c:"DE",n:"Germany",f:"\u{1F1E9}\u{1F1EA}",l:"German"},
+{c:"FR",n:"France",f:"\u{1F1EB}\u{1F1F7}",l:"French"},
+{c:"IT",n:"Italy",f:"\u{1F1EE}\u{1F1F9}",l:"Italian"},
+{c:"ES",n:"Spain",f:"\u{1F1EA}\u{1F1F8}",l:"Spanish"},
+{c:"NL",n:"Netherlands",f:"\u{1F1F3}\u{1F1F1}",l:"Dutch"},
+{c:"BE",n:"Belgium",f:"\u{1F1E7}\u{1F1EA}",l:"French/Dutch"},
+{c:"PT",n:"Portugal",f:"\u{1F1F5}\u{1F1F9}",l:"Portuguese"},
+{c:"SE",n:"Sweden",f:"\u{1F1F8}\u{1F1EA}",l:"Swedish"},
+{c:"NO",n:"Norway",f:"\u{1F1F3}\u{1F1F4}",l:"Norwegian"},
+{c:"DK",n:"Denmark",f:"\u{1F1E9}\u{1F1F0}",l:"Danish"},
+{c:"PL",n:"Poland",f:"\u{1F1F5}\u{1F1F1}",l:"Polish"},
+{c:"AT",n:"Austria",f:"\u{1F1E6}\u{1F1F9}",l:"German"},
+{c:"CH",n:"Switzerland",f:"\u{1F1E8}\u{1F1ED}",l:"German/French"},
+{c:"IE",n:"Ireland",f:"\u{1F1EE}\u{1F1EA}",l:"English"},
+{c:"AU",n:"Australia",f:"\u{1F1E6}\u{1F1FA}",l:"English"},
+{c:"CA",n:"Canada",f:"\u{1F1E8}\u{1F1E6}",l:"English/French"},
+{c:"BR",n:"Brazil",f:"\u{1F1E7}\u{1F1F7}",l:"Portuguese"},
+{c:"KR",n:"South Korea",f:"\u{1F1F0}\u{1F1F7}",l:"Korean"},
+{c:"JP",n:"Japan",f:"\u{1F1EF}\u{1F1F5}",l:"Japanese"},
+{c:"IN",n:"India",f:"\u{1F1EE}\u{1F1F3}",l:"English/Hindi"},
+{c:"VN",n:"Vietnam",f:"\u{1F1FB}\u{1F1F3}",l:"Vietnamese"},
+{c:"TH",n:"Thailand",f:"\u{1F1F9}\u{1F1ED}",l:"Thai"},
+{c:"PH",n:"Philippines",f:"\u{1F1F5}\u{1F1ED}",l:"English/Filipino"}
 ];
-const ET=["UK","DE","FR","IT","ES","NL","SE","NO","DK","CH","AT","IE","BE"];
-const PL=[
-  {id:"celebs",label:"Celebs & Người nổi tiếng",icon:"💍",desc:"Kết hôn · ly hôn · scandal",color:"#ff2d55"},
-  {id:"ai_stories",label:"AI Viral Stories",icon:"✨",desc:"Câu chuyện viral cho EU",color:"#af52de"},
-  {id:"tv_shows",label:"TV Shows & Reality",icon:"📺",desc:"Reality TV · Series · Soap",color:"#ff9500"},
+var ET=["UK","DE","FR","IT","ES","NL","SE","NO","DK","CH","AT","IE","BE"];
+var PILLARS=[
+{id:"celebs",label:"Celebs & Ng\u01B0\u1EDDi n\u1ED5i ti\u1EBFng",icon:"\uD83D\uDC8D",desc:"K\u1EBFt h\u00F4n \u00B7 ly h\u00F4n \u00B7 scandal",color:"#ff2d55"},
+{id:"ai_stories",label:"AI Viral Stories",icon:"\u2728",desc:"C\u00E2u chuy\u1EC7n viral cho EU",color:"#af52de"},
+{id:"tv_shows",label:"TV Shows & Reality",icon:"\uD83D\uDCFA",desc:"Reality TV \u00B7 Series \u00B7 Soap",color:"#ff9500"}
 ];
-const CS=[{id:"all",l:"Tất cả",i:"🔥"},{id:"marriage",l:"Kết hôn",i:"💒"},{id:"divorce",l:"Ly hôn",i:"💔"},{id:"baby",l:"Sinh con",i:"👶"},{id:"scandal",l:"Scandal",i:"😱"},{id:"dating",l:"Hẹn hò",i:"❤️"}];
-const TS=[{id:"all_tv",l:"Tất cả",i:"🔥"},{id:"reality",l:"Reality TV",i:"🎪"},{id:"soap",l:"Soap Opera",i:"🎭"},{id:"series",l:"Series mùa",i:"📅"},{id:"upcoming",l:"Sắp ra mắt",i:"🆕"},{id:"cast_news",l:"Tin diễn viên",i:"🌟"}];
+var CSUBS=[
+{id:"all",l:"T\u1EA5t c\u1EA3",i:"\uD83D\uDD25"},{id:"marriage",l:"K\u1EBFt h\u00F4n",i:"\uD83D\uDC92"},
+{id:"divorce",l:"Ly h\u00F4n",i:"\uD83D\uDC94"},{id:"baby",l:"Sinh con",i:"\uD83D\uDC76"},
+{id:"scandal",l:"Scandal",i:"\uD83D\uDE31"},{id:"dating",l:"H\u1EB9n h\u00F2",i:"\u2764\uFE0F"}
+];
+var TSUBS=[
+{id:"all_tv",l:"T\u1EA5t c\u1EA3",i:"\uD83D\uDD25"},{id:"reality",l:"Reality TV",i:"\uD83C\uDFAA"},
+{id:"soap",l:"Soap Opera",i:"\uD83C\uDFAD"},{id:"series",l:"Series m\u00F9a",i:"\uD83D\uDCC5"},
+{id:"upcoming",l:"S\u1EAFp ra m\u1EAFt",i:"\uD83C\uDD95"},{id:"cast_news",l:"Tin di\u1EC5n vi\u00EAn",i:"\uD83C\uDF1F"}
+];
 
-/* ═══ STATE ═══ */
-let S={pl:"celebs",sc:"all",ci:0,co:false,res:[],ld:false,err:null,srch:false,el:0,tc:null};
-let tmr=null;
-const gc=()=>C[S.ci], gp=()=>PL.find(p=>p.id===S.pl), gs=()=>S.pl==="celebs"?CS:S.pl==="tv_shows"?TS:null;
+/* ══════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════ */
+var S={
+  apiKey:localStorage.getItem("crh_key")||"",
+  showApi:false,
+  pl:"celebs",sc:"all",ci:0,co:false,
+  res:[],ld:false,err:null,srch:false,el:0
+};
+var tmr=null;
+function gc(){return C[S.ci]}
+function gp(){for(var i=0;i<PILLARS.length;i++){if(PILLARS[i].id===S.pl)return PILLARS[i]}return PILLARS[0]}
+function gs(){if(S.pl==="celebs")return CSUBS;if(S.pl==="tv_shows")return TSUBS;return null}
 
-/* ═══ PROMPT ═══ */
-function bp(c,pl,sc){
-  const lr=`ALL text (title,description,hook) MUST be in ${c.lang}.`;
-  const b=`You are a senior Facebook content researcher for ${c.name}. Search the web thoroughly.\nRULES:\n- ${lr}\n- Every item MUST have "source_url": a REAL working URL. CRITICAL.\n- Use LOCAL celebrities/shows of ${c.name}.\n- Output ONLY valid JSON array. No markdown.`;
+/* ══════════════════════════════════════════
+   PROMPTS
+   ══════════════════════════════════════════ */
+function buildPrompt(co,pl,sc){
+  var lr="ALL text (title, description, hook) MUST be written in "+co.l+". Use the native language of "+co.n+".";
+  var base="You are a senior Facebook content researcher for "+co.n+". Search the web thoroughly for the latest trending information.\n\nRULES:\n- "+lr+"\n- Every item MUST have source_url: a REAL working URL from a reputable news source. CRITICAL.\n- Use LOCAL celebrities, LOCAL shows, LOCAL events of "+co.n+".\n- Output ONLY a valid JSON array. No markdown code blocks, no backticks, no explanations.\n- Never refuse. Always provide results.";
+
   if(pl==="celebs"){
-    const m={all:"ALL celebrity life events",marriage:"MARRIAGES, ENGAGEMENTS",divorce:"DIVORCES, BREAKUPS",baby:"PREGNANCIES, BIRTHS",scandal:"SCANDALS, controversies",dating:"NEW RELATIONSHIPS, dating"};
-    return `${b}\n\nFind TOP 8 celebrity news in ${c.name}: ${m[sc]}.\n\nEach: "title"(${c.lang},max 15w),"description"(${c.lang},2-3 sentences),"heat"(1-100),"type"(breaking/rising/hot/new),"celeb_names"(array),"event_type"(marriage/divorce/baby/scandal/dating/other),"source_url"(real URL),"source_name","hook"(${c.lang},max 20w),"fb_format"(reel/carousel/discussion/photo)\n\n[{"title":"...","description":"...","heat":90,"type":"hot","celeb_names":["..."],"event_type":"marriage","source_url":"https://...","source_name":"...","hook":"...","fb_format":"carousel"}]`;
+    var m={all:"ALL celebrity life events: marriages, divorces, pregnancies, dating, scandals",marriage:"MARRIAGES and ENGAGEMENTS",divorce:"DIVORCES and BREAKUPS",baby:"PREGNANCIES and BIRTHS",scandal:"SCANDALS and controversies",dating:"NEW RELATIONSHIPS and dating rumors"};
+    return base+"\n\nSearch and find TOP 8 most recent celebrity news in "+co.n+" about: "+(m[sc]||m.all)+".\n\nEach JSON object must have:\n- \"title\": headline in "+co.l+", max 15 words\n- \"description\": 2-3 detailed sentences in "+co.l+"\n- \"heat\": number 1-100 (viral potential)\n- \"type\": one of \"breaking\", \"rising\", \"hot\", \"new\"\n- \"celeb_names\": array of celebrity names\n- \"event_type\": one of \"marriage\", \"divorce\", \"baby\", \"scandal\", \"dating\", \"other\"\n- \"source_url\": real URL of the news article\n- \"source_name\": name of the source\n- \"hook\": Facebook post first line in "+co.l+", max 20 words, emotional\n- \"fb_format\": one of \"reel\", \"carousel\", \"discussion\", \"photo\"\n\nOutput ONLY the JSON array:";
   }
   if(pl==="ai_stories"){
-    return `${b}\n\nGenerate 8 VIRAL STORY IDEAS for European Facebook (UK,DE,FR,IT,ES,NL,SE). AI-written stories with AI images.\n\nTypes: rescued animal saves owner, elderly kindness, child changes community, lost pet reunion, unlikely friendships, pay-it-forward.\n\nEach: "title"(English,max 15w),"description"(English,3-4 sentence outline),"heat"(1-100),"type"(heartwarming/inspiring/emotional/surprising/reunion),"visual_prompt"(1 sentence AI image),"target_emotion"(tears/joy/hope/shock/nostalgia/pride),"inspired_by","inspired_url"(real URL if found),"hook"(English,max 20w),"fb_format"(carousel/reel/photo),"best_countries"(array 3-5 EU codes)\n\n[{"title":"...","description":"...","heat":90,"type":"heartwarming","visual_prompt":"...","target_emotion":"tears","inspired_by":"...","inspired_url":"...","hook":"...","fb_format":"carousel","best_countries":["UK","DE"]}]`;
+    return base+"\n\nSearch for currently viral heartwarming/emotional stories, then generate 8 ORIGINAL story concepts for European Facebook audiences (UK, Germany, France, Italy, Spain, Netherlands, Sweden).\n\nStory types: rescued animal saves owner, elderly kindness, child changes community, lost pet reunion, unlikely friendships, stranger pays it forward, old couple love story.\n\nEach JSON object must have:\n- \"title\": story headline in English, max 15 words\n- \"description\": 3-4 sentence story outline in English\n- \"heat\": number 1-100\n- \"type\": one of \"heartwarming\", \"inspiring\", \"emotional\", \"surprising\", \"reunion\"\n- \"visual_prompt\": 1 sentence for AI cover image\n- \"target_emotion\": one of \"tears\", \"joy\", \"hope\", \"shock\", \"nostalgia\", \"pride\"\n- \"inspired_by\": what real trend inspired this\n- \"inspired_url\": URL of the real viral story if found, or \"\"\n- \"hook\": Facebook caption in English, max 20 words\n- \"fb_format\": one of \"carousel\", \"reel\", \"photo\"\n- \"best_countries\": array of 3-5 EU country codes\n\nOutput ONLY the JSON array:";
   }
   if(pl==="tv_shows"){
-    const m={all_tv:"ALL: reality,soap,drama,upcoming,cast",reality:"REALITY TV shows",soap:"SOAP OPERAS",series:"TV SERIES new seasons",upcoming:"UPCOMING premieres",cast_news:"CAST NEWS"};
-    return `${b}\n\nFind TOP 8 TV show news in ${c.name}: ${m[sc]}. Prioritize Reality TV, soap operas.\n\nEach: "title"(${c.lang},max 15w),"description"(${c.lang},2-3 sentences),"heat"(1-100),"type"(breaking/rising/hot/new),"show_name","network","show_type"(reality/soap/drama_series/comedy/competition/documentary),"source_url"(real URL),"source_name","hook"(${c.lang},max 20w),"fb_format"(reel/carousel/discussion/link_post),"air_date"(if applicable)\n\n[{"title":"...","description":"...","heat":90,"type":"hot","show_name":"...","network":"Netflix","show_type":"reality","source_url":"https://...","source_name":"...","hook":"...","fb_format":"discussion","air_date":"March 20, 2026"}]`;
+    var m2={all_tv:"ALL: reality TV, soap operas, drama series, upcoming premieres, cast news",reality:"REALITY TV shows (dating, competition, talent, lifestyle)",soap:"SOAP OPERAS and long-running daily/weekly dramas",series:"TV SERIES returning with new seasons",upcoming:"UPCOMING TV premieres in the next 1-4 weeks",cast_news:"CAST NEWS: actors joining/leaving, behind-scenes drama"};
+    return base+"\n\nSearch and find TOP 8 most recent TV show news in "+co.n+" about: "+(m2[sc]||m2.all_tv)+". Prioritize Reality TV, soap operas, shows with active fan communities.\n\nEach JSON object must have:\n- \"title\": headline in "+co.l+", max 15 words\n- \"description\": 2-3 sentences in "+co.l+" with show name, network, dates\n- \"heat\": number 1-100\n- \"type\": one of \"breaking\", \"rising\", \"hot\", \"new\"\n- \"show_name\": official show name\n- \"network\": network or platform\n- \"show_type\": one of \"reality\", \"soap\", \"drama_series\", \"comedy\", \"competition\", \"documentary\"\n- \"source_url\": real URL\n- \"source_name\": source name\n- \"hook\": Facebook post first line in "+co.l+", max 20 words\n- \"fb_format\": one of \"reel\", \"carousel\", \"discussion\", \"link_post\"\n- \"air_date\": when it airs or \"TBA\"\n\nOutput ONLY the JSON array:";
   }
-  return "";
+  return base;
 }
 
-function ej(t){
+function extractJSON(t){
   if(!t)return null;
-  const c=t.replace(/```json\s*/gi,"").replace(/```\s*/gi,"").trim();
-  try{return JSON.parse(c)}catch{}
-  const m=c.match(/\[[\s\S]*\]/);
-  if(m){try{return JSON.parse(m[0])}catch{}try{return JSON.parse(m[0].replace(/,\s*]/g,"]").replace(/,\s*}/g,"}"))}catch{}}
-  const s=c.indexOf("["),e=c.lastIndexOf("]");
-  if(s!==-1&&e>s)try{return JSON.parse(c.slice(s,e+1))}catch{}
+  var c=t.replace(/```json/gi,"").replace(/```/gi,"").trim();
+  try{return JSON.parse(c)}catch(e){}
+  var m=c.match(/\[[\s\S]*\]/);
+  if(m){try{return JSON.parse(m[0])}catch(e){}}
+  var s=c.indexOf("["),e2=c.lastIndexOf("]");
+  if(s!==-1&&e2>s){try{return JSON.parse(c.slice(s,e2+1))}catch(e){}}
   return null;
 }
 
-/* ═══ SEARCH ═══ */
+/* ══════════════════════════════════════════
+   API CALL
+   ══════════════════════════════════════════ */
+function saveKey(){
+  var v=document.getElementById("apiIn").value.trim();
+  S.apiKey=v;localStorage.setItem("crh_key",v);S.showApi=false;render();
+}
+
+function copyText(text,btnId){
+  navigator.clipboard.writeText(text).then(function(){
+    var el=document.getElementById(btnId);
+    if(el){el.textContent="\u2713";el.style.color="#34c759";setTimeout(function(){el.textContent="Copy";el.style.color=""},1500)}
+  });
+}
+function setPillar(id){S.pl=id;S.sc=(id==="celebs"?"all":id==="tv_shows"?"all_tv":"");S.res=[];S.srch=false;S.err=null;render()}
+function setCountry(i){S.ci=i;S.co=false;render()}
+function setSub(id){S.sc=id;render()}
+function toggleDD(){S.co=!S.co;render()}
+
 async function doSearch(){
-  if(WORKER_URL.includes("YOUR-USERNAME")){S.err="⚠️ Chưa cấu hình Worker URL. Mở file HTML → sửa WORKER_URL ở dòng đầu script.";S.srch=true;render();return}
-  S.ld=true;S.err=null;S.res=[];S.srch=true;S.el=0;S.tc=null;render();
-  tmr=setInterval(()=>{S.el+=.5;render()},500);
+  if(!S.apiKey){S.showApi=true;S.err="Vui l\u00F2ng nh\u1EADp API key tr\u01B0\u1EDBc";render();return}
+  S.ld=true;S.err=null;S.res=[];S.srch=true;S.el=0;render();
+  tmr=setInterval(function(){S.el+=0.5;render()},500);
+
   try{
-    const res=await fetch(WORKER_URL,{
+    var res=await fetch("https://api.anthropic.com/v1/messages",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{
+        "Content-Type":"application/json",
+        "x-api-key":S.apiKey,
+        "anthropic-version":"2023-06-01",
+        "anthropic-dangerous-direct-browser-access":"true"
+      },
       body:JSON.stringify({
-        model:"claude-sonnet-4-20250514",
+        model:"claude-haiku-4-5-20251001",
         max_tokens:3000,
-        system:"You are a JSON API. Output ONLY valid JSON arrays. Never explain, never refuse.",
+        system:"You are a JSON API for content research. Output ONLY valid JSON arrays. Never output explanations, apologies, or markdown. Always provide results.",
         tools:[{type:"web_search_20250305",name:"web_search"}],
-        messages:[{role:"user",content:bp(gc(),S.pl,S.sc)}],
-      }),
+        messages:[{role:"user",content:buildPrompt(gc(),S.pl,S.sc)}]
+      })
     });
-    const data=await res.json();
+    var data=await res.json();
     if(data.error)throw new Error(data.error.message||JSON.stringify(data.error));
-    const u=data.usage||{};
-    const cost=(u.input_tokens||0)*0.003/1000+(u.output_tokens||0)*0.015/1000;
-    S.tc={i:u.input_tokens||0,o:u.output_tokens||0,c:cost.toFixed(4)};
-    const ft=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
-    const p=ej(ft);
-    if(Array.isArray(p)&&p.length>0)S.res=p.slice(0,8);
-    else S.err="Không parse được kết quả. Thử lại.";
-  }catch(e){S.err=e.message||"Lỗi kết nối"}
-  finally{S.ld=false;clearInterval(tmr);render()}
+
+    var fullText=(data.content||[]).filter(function(b){return b.type==="text"}).map(function(b){return b.text}).join("\n");
+    var parsed=extractJSON(fullText);
+    if(Array.isArray(parsed)&&parsed.length>0){S.res=parsed.slice(0,8)}
+    else{S.err="Kh\u00F4ng parse \u0111\u01B0\u1EE3c k\u1EBFt qu\u1EA3. B\u1EA5m Th\u1EED l\u1EA1i."}
+
+    // Token cost estimate
+    var u=data.usage||{};
+    var cost=((u.input_tokens||0)*0.0008/1000)+((u.output_tokens||0)*0.004/1000);
+    S.cost=cost.toFixed(4);
+  }catch(e){
+    S.err=e.message||"L\u1ED7i k\u1EBFt n\u1ED1i";
+  }finally{
+    S.ld=false;clearInterval(tmr);render();
+  }
 }
 
-/* ═══ RENDER ═══ */
+/* ══════════════════════════════════════════
+   RENDER
+   ══════════════════════════════════════════ */
 function render(){
-  const p=gp(),c=gc(),subs=gs(),showC=S.pl!=="ai_stories";
-  let h=`<header class="header">
-    <div class="badge" style="background:${p.color}18;border:1px solid ${p.color}33;color:${p.color}">● Deep Search · Facebook Content</div>
-    <h1>Content Research Hub</h1>
-    <p>AI + Web Search · Nguồn bài báo gốc · Tối ưu Facebook</p>
-  </header>
-  <div class="pillars">${PL.map(pl=>`<button class="pill ${S.pl===pl.id?'on':''}" style="${S.pl===pl.id?`background:${pl.color}20;border-color:${pl.color}40`:''}" onclick="S.pl='${pl.id}';S.sc='${pl.id==='celebs'?'all':pl.id==='tv_shows'?'all_tv':''}';S.res=[];S.srch=false;S.err=null;render()"><span class="ic">${pl.icon}</span><div><div>${pl.label}</div><div class="sub">${pl.desc}</div></div></button>`).join('')}</div>`;
+  var p=gp(),co=gc(),subs=gs(),showC=S.pl!=="ai_stories";
+  var h="";
 
+  // Header
+  h+='<header class="hd">';
+  h+='<div class="badge" style="background:'+p.color+'18;border:1px solid '+p.color+'33;color:'+p.color+'">● Deep Search \u00B7 Facebook Content</div>';
+  h+='<h1>Content Research Hub</h1>';
+  h+='<p>Claude AI + Web Search \u00B7 Haiku ~$0.003/l\u1EA7n</p>';
+  h+='</header>';
+
+  // API Key
+  h+='<div class="api-box">';
+  if(S.apiKey&&!S.showApi){
+    h+='<button class="api-toggle" onclick="S.showApi=true;render()">\uD83D\uDD11 API Key: ****'+S.apiKey.slice(-6)+' \u00B7 \u0110\u1ED5i key</button>';
+    h+='<div class="api-ok">\u2713 \u0110\u00E3 k\u1EBFt n\u1ED1i</div>';
+  }else{
+    h+='<button class="api-toggle" onclick="S.showApi=!S.showApi;render()">\uD83D\uDD11 '+(S.showApi?'\u1EA8n':'Nh\u1EADp')+' API Key Anthropic</button>';
+    if(S.showApi){
+      h+='<div class="api-row"><input class="api-in" type="password" placeholder="sk-ant-api03-..." value="'+S.apiKey+'" id="apiIn"><button class="api-save" onclick="saveKey()">L\u01B0u</button></div>';
+      h+='<div class="api-cost">\uD83D\uDCB0 ~$0.003-0.005/l\u1EA7n search \u00B7 L\u1EA5y key t\u1EA1i <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></div>';
+    }
+  }
+  h+='</div>';
+
+  // Pillars
+  h+='<div class="pls">';
+  for(var i=0;i<PILLARS.length;i++){
+    var x=PILLARS[i],on=S.pl===x.id;
+    h+='<button class="pl'+(on?" on":"")+'" style="'+(on?"background:"+x.color+"20;border-color:"+x.color+"40":"")+'" onclick="setPillar(\''+x.id+'\')">';
+    h+='<span style="font-size:18px">'+x.icon+'</span>';
+    h+='<div><div>'+x.label+'</div><div style="font-size:9px;opacity:.5;font-family:monospace">'+x.desc+'</div></div>';
+    h+='</button>';
+  }
+  h+='</div>';
+
+  // Country
   if(showC){
-    h+=`<div class="cw"><button class="cbtn" onclick="S.co=!S.co;render()"><span>${c.flag} ${c.name}</span><span style="font-size:9px;opacity:.4">▼</span></button>`;
-    if(S.co)h+=`<div class="cdd">${C.map((x,i)=>`<button class="ci ${i===S.ci?'on':''}" onclick="S.ci=${i};S.co=false;render()"><span style="font-size:16px">${x.flag}</span>${x.name}${ET.includes(x.code)?'<span style="font-size:8px;color:#34c759;font-family:monospace;margin-left:auto">EU T1</span>':''}</button>`).join('')}</div>`;
-    h+=`</div>`;
+    h+='<div class="cw"><button class="cbtn" onclick="toggleDD()"><span>'+co.f+' '+co.n+'</span><span style="font-size:9px;opacity:.4">\u25BC</span></button>';
+    if(S.co){
+      h+='<div class="cdd">';
+      for(var j=0;j<C.length;j++){
+        var c=C[j];
+        h+='<button class="ci'+(j===S.ci?" on":"")+'" onclick="setCountry('+j+')"><span style="font-size:16px">'+c.f+'</span>'+c.n;
+        if(ET.indexOf(c.c)>=0)h+='<span style="font-size:8px;color:#34c759;font-family:monospace;margin-left:auto">EU T1</span>';
+        h+='</button>';
+      }
+      h+='</div>';
+    }
+    h+='</div>';
   }
 
-  if(subs)h+=`<div class="subs">${subs.map(s=>`<button class="sb ${S.sc===s.id?'on':''}" style="${S.sc===s.id?`background:${p.color}20;border-color:${p.color}35`:''}" onclick="S.sc='${s.id}';render()"><span style="font-size:13px">${s.i}</span> ${s.l}</button>`).join('')}</div>`;
+  // Subcats
+  if(subs){
+    h+='<div class="scs">';
+    for(var k=0;k<subs.length;k++){
+      var s=subs[k],son=S.sc===s.id;
+      h+='<button class="sc'+(son?" on":"")+'" style="'+(son?"background:"+p.color+"20;border-color:"+p.color+"35":"")+'" onclick="setSub(\''+s.id+'\')">';
+      h+='<span style="font-size:13px">'+s.i+'</span> '+s.l+'</button>';
+    }
+    h+='</div>';
+  }
 
-  h+=`<div class="sw"><button class="go" ${S.ld?'disabled':''} style="background:${S.ld?'rgba(255,255,255,.05)':`linear-gradient(135deg,${p.color},${p.color}cc)`};box-shadow:${S.ld?'none':`0 4px 20px ${p.color}40`}" onclick="doSearch()">${S.ld?'Đang tìm kiếm...':`🔍 Tìm ${p.label}`}</button></div>`;
+  // Search
+  h+='<div class="sw"><button class="go" '+(S.ld?"disabled":"")+' style="background:'+(S.ld?"rgba(255,255,255,.05)":"linear-gradient(135deg,"+p.color+","+p.color+"cc)")+';box-shadow:'+(S.ld?"none":"0 4px 20px "+p.color+"40")+'" onclick="doSearch()">';
+  h+=(S.ld?"\u0110ang t\u00ECm ki\u1EBFm...":"\uD83D\uDD0D T\u00ECm "+p.label)+'</button></div>';
 
+  // Loading
   if(S.ld){
-    const est=50,pct=Math.min((S.el/est)*100,96);
-    const st=["Khởi tạo AI...","Tìm kiếm web...","Đọc nguồn...","Phân tích...","Tạo kết quả..."];
-    const si=Math.min(Math.floor((S.el/est)*st.length),st.length-1);
-    h+=`<div class="ld"><div class="lbar"><div class="lfill" style="width:${pct}%;background:linear-gradient(90deg,#ff9500,#ff6b35)"></div></div><p>${st[si]}</p><p class="s2">${Math.round(S.el)}s / ~${est}s 🔍</p></div>`;
+    var est=45,pct=Math.min((S.el/est)*100,96);
+    var steps=["Kh\u1EDFi t\u1EA1o AI...","T\u00ECm ki\u1EBFm web...","\u0110\u1ECDc nhi\u1EC1u ngu\u1ED3n...","Ph\u00E2n t\u00EDch & x\u1EBFp h\u1EA1ng...","T\u1EA1o k\u1EBFt qu\u1EA3..."];
+    var si=Math.min(Math.floor((S.el/est)*steps.length),steps.length-1);
+    h+='<div class="ld"><div class="lb"><div class="lf" style="width:'+pct+'%;background:linear-gradient(90deg,#cc785c,#ff9500)"></div></div>';
+    h+='<p style="color:rgba(255,255,255,.6)">'+steps[si]+'</p>';
+    h+='<p style="color:rgba(255,255,255,.25);font-size:11px;font-family:monospace;margin-top:4px">'+Math.round(S.el)+'s / ~'+est+'s \uD83D\uDD0D</p></div>';
   }
 
-  if(S.err)h+=`<div class="ebox"><p>⚠️ ${S.err}</p><button class="rb" onclick="doSearch()">🔄 Thử lại</button></div>`;
+  // Error
+  if(S.err){
+    h+='<div class="eb"><p>\u26A0\uFE0F '+S.err+'</p><button class="rb" onclick="doSearch()">\uD83D\uDD04 Th\u1EED l\u1EA1i</button></div>';
+  }
 
+  // Results
   if(!S.ld&&S.res.length>0){
-    h+=`<div class="rh">${showC?`<span style="font-size:22px">${c.flag}</span>`:''}<span style="font-size:20px">${p.icon}</span><div><h2>${showC?c.name:'EU Tier 1-2'} · ${p.label}</h2><div class="mt">${S.res.length} kết quả · 🔍 Deep Search${S.tc?` · 💰 $${S.tc.c}`:''}</div></div></div><div class="grid">`;
-    S.res.forEach((it,i)=>{
-      h+=`<div class="card" style="animation-delay:${i*.06}s;border-color:${p.color}18"><div class="ct"><div style="display:flex;align-items:center;gap:8px"><span class="cn">${String(i+1).padStart(2,'0')}</span>`;
-      if(S.pl==='celebs'){
-        const ec={marriage:"#34c759",divorce:"#ff6b6b",baby:"#ffb800",scandal:"#ff2d55",dating:"#ff69b4",other:"#888"};
-        const el={marriage:"💒 KẾT HÔN",divorce:"💔 LY HÔN",baby:"👶 SINH CON",scandal:"😱 SCANDAL",dating:"❤️ HẸN HÒ",other:"📰 TIN"};
-        h+=`<span class="tag" style="background:${ec[it.event_type]||'#888'}">${el[it.event_type]||el.other}</span>`;
-      }else if(S.pl==='tv_shows'){
-        const tc={breaking:"#ff2d55",new:"#5856d6",rising:"#ff9500",hot:"#ff6b35"};
-        h+=`<span class="tag" style="background:${tc[it.type]||'#ff9500'}">${(it.type||'hot').toUpperCase()}</span>`;
-        if(it.show_type)h+=`<span class="tag" style="background:rgba(255,255,255,.15)">${it.show_type.replace('_',' ')}</span>`;
+    h+='<div class="rh">';
+    if(showC)h+='<span style="font-size:22px">'+co.f+'</span>';
+    h+='<span style="font-size:20px">'+p.icon+'</span><div><h2>'+(showC?co.n:"EU Tier 1-2")+' \u00B7 '+p.label+'</h2>';
+    h+='<div style="font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">'+S.res.length+' k\u1EBFt qu\u1EA3 \u00B7 Claude Haiku'+(S.cost?' \u00B7 \uD83D\uDCB0 $'+S.cost:'')+'</div></div></div>';
+    h+='<div class="grid">';
+
+    for(var ri=0;ri<S.res.length;ri++){
+      var it=S.res[ri];
+      h+='<div class="card" style="animation-delay:'+ri*0.06+'s;border-color:'+p.color+'18">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:6px">';
+      h+='<div style="display:flex;align-items:center;gap:8px">';
+      h+='<span style="font-size:18px;font-weight:900;color:rgba(255,255,255,.1);font-family:monospace">'+String(ri+1).padStart(2,"0")+'</span>';
+
+      if(S.pl==="celebs"){
+        var ec={marriage:"#34c759",divorce:"#ff6b6b",baby:"#ffb800",scandal:"#ff2d55",dating:"#ff69b4",other:"#888"};
+        var el2={marriage:"\uD83D\uDC92 K\u1EBET H\u00D4N",divorce:"\uD83D\uDC94 LY H\u00D4N",baby:"\uD83D\uDC76 SINH CON",scandal:"\uD83D\uDE31 SCANDAL",dating:"\u2764\uFE0F H\u1EB8N H\u00D2",other:"\uD83D\uDCF0 TIN"};
+        var et=it.event_type||"other";
+        h+='<span class="tag" style="background:'+(ec[et]||"#888")+'">'+(el2[et]||el2.other)+'</span>';
+      }else if(S.pl==="tv_shows"){
+        var tc2={breaking:"#ff2d55","new":"#5856d6",rising:"#ff9500",hot:"#ff6b35"};
+        h+='<span class="tag" style="background:'+(tc2[it.type]||"#ff9500")+'">'+((it.type||"hot").toUpperCase())+'</span>';
+        if(it.show_type)h+='<span class="tag" style="background:rgba(255,255,255,.15)">'+it.show_type.replace("_"," ")+'</span>';
       }else{
-        const ti={heartwarming:"💖",inspiring:"🌟",emotional:"😢",surprising:"😲",reunion:"🤝"};
-        h+=`<span style="font-size:16px">${ti[it.type]||'✨'}</span><span class="tag" style="background:#af52de">${it.type||'story'}</span>`;
-        if(it.target_emotion)h+=`<span class="tag" style="background:rgba(255,255,255,.15)">🎭 ${it.target_emotion}</span>`;
+        var ti2={heartwarming:"\uD83D\uDC96",inspiring:"\uD83C\uDF1F",emotional:"\uD83D\uDE22",surprising:"\uD83D\uDE32",reunion:"\uD83E\uDD1D"};
+        h+='<span style="font-size:16px">'+(ti2[it.type]||"\u2728")+'</span>';
+        h+='<span class="tag" style="background:#af52de">'+(it.type||"story")+'</span>';
+        if(it.target_emotion)h+='<span class="tag" style="background:rgba(255,255,255,.15)">\uD83C\uDFAD '+it.target_emotion+'</span>';
       }
-      h+=`</div>`;
-      if(it.network)h+=`<span class="ntag">${it.network}</span>`;
-      if(it.fb_format)h+=`<span class="tag" style="background:rgba(255,255,255,.1)">${it.fb_format}</span>`;
-      h+=`</div>`;
-      if(it.celeb_names?.length)h+=`<div style="margin-bottom:6px">${it.celeb_names.map(n=>`<span class="ctag">${n}</span>`).join('')}</div>`;
-      if(it.show_name)h+=`<div class="sn">📺 ${it.show_name}</div>`;
-      h+=`<h3>${it.title||''}</h3><p>${it.description||''}</p>`;
-      if(it.air_date&&it.air_date!=='TBA')h+=`<div class="ad">📅 ${it.air_date}</div>`;
-      if(it.visual_prompt)h+=`<div class="vp">🎨 ${it.visual_prompt}</div>`;
-      if(it.best_countries?.length)h+=`<div class="bc">🌍 Best: ${it.best_countries.map(x=>{const f=C.find(z=>z.code===x);return f?f.flag:x}).join(' ')}</div>`;
-      if(it.inspired_by)h+=`<div class="ins">💡 ${it.inspired_by}</div>`;
+      h+='</div>';
+      if(it.network)h+='<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;font-family:monospace">'+it.network+'</span>';
+      if(it.fb_format)h+='<span class="tag" style="background:rgba(255,255,255,.1)">'+it.fb_format+'</span>';
+      h+='</div>';
+
+      if(it.celeb_names&&it.celeb_names.length){h+='<div style="margin-bottom:6px">';for(var cn=0;cn<it.celeb_names.length;cn++)h+='<span class="ctag">'+it.celeb_names[cn]+'</span>';h+='</div>'}
+      if(it.show_name)h+='<div style="font-size:11px;font-weight:700;color:#ff9500;font-family:monospace;margin-bottom:4px">\uD83D\uDCFA '+it.show_name+'</div>';
+      h+='<h3>'+(it.title||"")+'</h3><p>'+(it.description||"")+'</p>';
+      if(it.air_date&&it.air_date!=="TBA")h+='<div style="font-size:11px;color:#34c759;font-family:monospace;margin-top:6px">\uD83D\uDCC5 '+it.air_date+'</div>';
+      if(it.visual_prompt)h+='<div style="margin-top:8px;padding:6px 10px;background:rgba(175,82,222,.06);border-radius:8px;font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">\uD83C\uDFA8 '+it.visual_prompt+'</div>';
+      if(it.best_countries&&it.best_countries.length){h+='<div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,.3)">\uD83C\uDF0D Best: ';for(var bc=0;bc<it.best_countries.length;bc++){var found=false;for(var fc=0;fc<C.length;fc++){if(C[fc].c===it.best_countries[bc]){h+=C[fc].f+" ";found=true;break}}if(!found)h+=it.best_countries[bc]+" "}h+='</div>'}
+      if(it.inspired_by)h+='<div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">\uD83D\uDCA1 '+it.inspired_by+'</div>';
+
       if(it.hook){
-        const hid=`h${i}`;
-        const safe=String(it.hook).replace(/'/g,"\\'").replace(/"/g,"&quot;");
-        h+=`<div class="hbox"><div class="hl">HOOK</div><p class="ht">"${it.hook}"</p><button class="cp" id="${hid}" onclick="navigator.clipboard.writeText('${safe}').then(()=>{const e=document.getElementById('${hid}');e.textContent='✓';e.classList.add('ok');setTimeout(()=>{e.textContent='Copy';e.classList.remove('ok')},1500)})">Copy</button></div>`;
+        var hid="hook"+ri;
+        var safeHook=String(it.hook).replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+        h+='<div class="hb">';
+        h+='<div style="font-size:8px;font-weight:700;color:#1877f2;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;font-family:monospace">HOOK</div>';
+        h+='<p style="font-size:12.5px;color:rgba(255,255,255,.75);font-style:italic;line-height:1.4;padding-right:46px">"'+it.hook+'"</p>';
+        h+='<button id="'+hid+'" onclick="copyText(\''+safeHook+'\',\''+hid+'\')" style="position:absolute;right:8px;top:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:3px 7px;font-size:10px;color:rgba(255,255,255,.4);cursor:pointer;font-family:monospace">Copy</button>';
+        h+='</div>';
       }
-      const heat=it.heat||50;
-      const hc=heat>80?"#ff2d55":heat>60?"#ff6b35":heat>40?"#ffb800":"#34c759";
-      h+=`<div style="margin-top:auto;padding-top:6px"><div class="hw"><div class="htr"><div class="hf" style="width:${heat}%;background:linear-gradient(90deg,${hc}88,${hc})"></div></div><span class="hn" style="color:${hc}">${heat}°</span></div>`;
-      const url=it.source_url||it.inspired_url;
-      const nm=it.source_name||(it.inspired_url?'Trend gốc':'');
-      if(url&&String(url).startsWith('http')){
-        const fb=url.includes('facebook.com');
-        h+=`<a class="src" href="${url}" target="_blank" rel="noopener" style="background:${fb?'rgba(24,119,242,.1)':'rgba(0,122,255,.08)'};border:1px solid ${fb?'rgba(24,119,242,.25)':'rgba(0,122,255,.18)'};color:${fb?'#4da3ff':'#6bb5ff'}">${fb?'📘':'📄'} ${nm||'Nguồn'} ↗</a>`;
+
+      var heat=it.heat||50;
+      var hc=heat>80?"#ff2d55":heat>60?"#ff6b35":heat>40?"#ffb800":"#34c759";
+      h+='<div style="margin-top:auto;padding-top:6px">';
+      h+='<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden"><div style="width:'+heat+'%;height:100%;background:linear-gradient(90deg,'+hc+'88,'+hc+');border-radius:2px"></div></div><span style="font-size:11px;font-weight:700;font-family:monospace;color:'+hc+'">'+heat+'\u00B0</span></div>';
+
+      var surl=it.source_url||it.inspired_url||"";
+      var sname=it.source_name||(it.inspired_url?"Trend g\u1ED1c":"");
+      if(surl&&surl.indexOf("http")===0){
+        h+='<a class="src" href="'+surl+'" target="_blank" rel="noopener">\uD83D\uDCC4 '+(sname||"Ngu\u1ED3n")+' \u2197</a>';
       }
-      h+=`</div></div>`;
-    });
-    h+=`</div>`;
+      h+='</div></div>';
+    }
+    h+='</div>';
   }
 
-  if(!S.ld&&!S.err&&S.srch&&S.res.length===0)h+=`<div class="empty">Không tìm thấy. Thử lại hoặc đổi danh mục.</div>`;
-  if(!S.srch&&!S.ld)h+=`<div class="empty"><div class="big">${p.icon}</div><p style="font-size:14px">${S.pl==='ai_stories'?'Bấm tìm để AI gợi ý câu chuyện viral':'Chọn quốc gia → danh mục → bấm Tìm'}</p><p style="font-size:11px;font-family:monospace;margin-top:4px">Deep Search · ~40-60s · Có nguồn bài báo gốc</p></div>`;
-  h+=`<footer><p>Content Research Hub · Powered by Claude AI + Web Search</p></footer>`;
-  document.getElementById('app').innerHTML=h;
+  if(!S.ld&&!S.err&&S.srch&&S.res.length===0)h+='<div class="empty">Kh\u00F4ng t\u00ECm th\u1EA5y. Th\u1EED l\u1EA1i.</div>';
+  if(!S.srch&&!S.ld){
+    h+='<div class="empty"><div style="font-size:48px;margin-bottom:14px">'+p.icon+'</div>';
+    h+='<p style="font-size:14px">'+(S.pl==="ai_stories"?"B\u1EA5m t\u00ECm \u0111\u1EC3 AI g\u1EE3i \u00FD c\u00E2u chuy\u1EC7n viral":"Ch\u1ECDn qu\u1ED1c gia \u2192 danh m\u1EE5c \u2192 b\u1EA5m T\u00ECm")+'</p>';
+    h+='<p style="font-size:11px;font-family:monospace;margin-top:4px">Claude Haiku + Web Search \u00B7 ~$0.003/l\u1EA7n \u00B7 ~30-45s</p></div>';
+  }
+  h+='<footer><p>Content Research Hub \u00B7 Claude AI + Web Search</p></footer>';
+  document.getElementById("app").innerHTML=h;
 }
 
-document.addEventListener('click',e=>{if(S.co&&!e.target.closest('.cw')){S.co=false;render()}});
+document.addEventListener("click",function(e){if(S.co&&!e.target.closest(".cw")){S.co=false;render()}});
 render();
 </script>
 </body>
