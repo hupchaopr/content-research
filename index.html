@@ -57,9 +57,13 @@ footer p{font-size:10px;color:rgba(255,255,255,.12);font-family:monospace}
 <div class="ct" id="app"></div>
 <script>
 /*╔══════════════════════════════════════════════════════╗
-  ║  ĐỔI URL WORKER CỦA ANH Ở ĐÂY                     ║
+  ║  DÁN API KEY CỦA ANH VÀO ĐÂY (dòng duy nhất)      ║
   ╚══════════════════════════════════════════════════════╝*/
-var WORKER_URL = "https://content-research.hupchaopr.workers.dev";
+var API_KEY = "";
+var USE_WORKER = "https://content-research.hupchaopr.workers.dev";
+/*  Lấy key tại: https://console.anthropic.com/settings/keys
+    Không cần Worker, không cần server.
+    Upload file này lên GitHub Pages = xong.            */
 
 var C=[
 {c:"US",n:"United States",f:"\u{1F1FA}\u{1F1F8}",l:"English"},
@@ -94,16 +98,8 @@ var PILLARS=[
 {id:"ai_stories",label:"AI Viral Stories",icon:"\u2728",desc:"C\u00E2u chuy\u1EC7n viral cho EU",color:"#af52de"},
 {id:"tv_shows",label:"TV Shows & Reality",icon:"\uD83D\uDCFA",desc:"Reality TV \u00B7 Series \u00B7 Soap",color:"#ff9500"}
 ];
-var CSUBS=[
-{id:"all",l:"T\u1EA5t c\u1EA3",i:"\uD83D\uDD25"},{id:"marriage",l:"K\u1EBFt h\u00F4n",i:"\uD83D\uDC92"},
-{id:"divorce",l:"Ly h\u00F4n",i:"\uD83D\uDC94"},{id:"baby",l:"Sinh con",i:"\uD83D\uDC76"},
-{id:"scandal",l:"Scandal",i:"\uD83D\uDE31"},{id:"dating",l:"H\u1EB9n h\u00F2",i:"\u2764\uFE0F"}
-];
-var TSUBS=[
-{id:"all_tv",l:"T\u1EA5t c\u1EA3",i:"\uD83D\uDD25"},{id:"reality",l:"Reality TV",i:"\uD83C\uDFAA"},
-{id:"soap",l:"Soap Opera",i:"\uD83C\uDFAD"},{id:"series",l:"Series m\u00F9a",i:"\uD83D\uDCC5"},
-{id:"upcoming",l:"S\u1EAFp ra m\u1EAFt",i:"\uD83C\uDD95"},{id:"cast_news",l:"Tin di\u1EC5n vi\u00EAn",i:"\uD83C\uDF1F"}
-];
+var CSUBS=[{id:"all",l:"T\u1EA5t c\u1EA3",i:"\uD83D\uDD25"},{id:"marriage",l:"K\u1EBFt h\u00F4n",i:"\uD83D\uDC92"},{id:"divorce",l:"Ly h\u00F4n",i:"\uD83D\uDC94"},{id:"baby",l:"Sinh con",i:"\uD83D\uDC76"},{id:"scandal",l:"Scandal",i:"\uD83D\uDE31"},{id:"dating",l:"H\u1EB9n h\u00F2",i:"\u2764\uFE0F"}];
+var TSUBS=[{id:"all_tv",l:"T\u1EA5t c\u1EA3",i:"\uD83D\uDD25"},{id:"reality",l:"Reality TV",i:"\uD83C\uDFAA"},{id:"soap",l:"Soap Opera",i:"\uD83C\uDFAD"},{id:"series",l:"Series m\u00F9a",i:"\uD83D\uDCC5"},{id:"upcoming",l:"S\u1EAFp ra m\u1EAFt",i:"\uD83C\uDD95"},{id:"cast_news",l:"Tin di\u1EC5n vi\u00EAn",i:"\uD83C\uDF1F"}];
 
 var S={pl:"celebs",sc:"all",ci:0,co:false,res:[],ld:false,err:null,srch:false,el:0,cost:null};
 var tmr=null;
@@ -114,18 +110,9 @@ function gs(){if(S.pl==="celebs")return CSUBS;if(S.pl==="tv_shows")return TSUBS;
 function buildPrompt(co,pl,sc){
   var lr="ALL text (title, description, hook) MUST be written in "+co.l+". Use the native language of "+co.n+".";
   var base="You are a senior Facebook content researcher for "+co.n+". Search the web thoroughly for the latest trending information.\n\nRULES:\n- "+lr+"\n- Every item MUST have source_url: a REAL working URL from a reputable news source. CRITICAL.\n- Use LOCAL celebrities, LOCAL shows, LOCAL events of "+co.n+".\n- Output ONLY a valid JSON array. No markdown code blocks, no backticks, no explanations.\n- Never refuse. Always provide results.";
-
-  if(pl==="celebs"){
-    var m={all:"ALL celebrity life events: marriages, divorces, pregnancies, dating, scandals",marriage:"MARRIAGES and ENGAGEMENTS",divorce:"DIVORCES and BREAKUPS",baby:"PREGNANCIES and BIRTHS",scandal:"SCANDALS and controversies",dating:"NEW RELATIONSHIPS and dating rumors"};
-    return base+"\n\nSearch and find TOP 8 most recent celebrity news in "+co.n+" about: "+(m[sc]||m.all)+".\n\nEach JSON object must have:\n- \"title\": headline in "+co.l+", max 15 words\n- \"description\": 2-3 detailed sentences in "+co.l+"\n- \"heat\": number 1-100 (viral potential)\n- \"type\": one of \"breaking\", \"rising\", \"hot\", \"new\"\n- \"celeb_names\": array of celebrity names\n- \"event_type\": one of \"marriage\", \"divorce\", \"baby\", \"scandal\", \"dating\", \"other\"\n- \"source_url\": real URL of the news article\n- \"source_name\": name of the source\n- \"hook\": Facebook post first line in "+co.l+", max 20 words, emotional\n- \"fb_format\": one of \"reel\", \"carousel\", \"discussion\", \"photo\"\n\nOutput ONLY the JSON array:";
-  }
-  if(pl==="ai_stories"){
-    return base+"\n\nSearch for currently viral heartwarming/emotional stories, then generate 8 ORIGINAL story concepts for European Facebook audiences (UK, Germany, France, Italy, Spain, Netherlands, Sweden).\n\nStory types: rescued animal saves owner, elderly kindness, child changes community, lost pet reunion, unlikely friendships, stranger pays it forward, old couple love story.\n\nEach JSON object must have:\n- \"title\": story headline in English, max 15 words\n- \"description\": 3-4 sentence story outline in English\n- \"heat\": number 1-100\n- \"type\": one of \"heartwarming\", \"inspiring\", \"emotional\", \"surprising\", \"reunion\"\n- \"visual_prompt\": 1 sentence for AI cover image\n- \"target_emotion\": one of \"tears\", \"joy\", \"hope\", \"shock\", \"nostalgia\", \"pride\"\n- \"inspired_by\": what real trend inspired this\n- \"inspired_url\": URL of the real viral story if found, or \"\"\n- \"hook\": Facebook caption in English, max 20 words\n- \"fb_format\": one of \"carousel\", \"reel\", \"photo\"\n- \"best_countries\": array of 3-5 EU country codes\n\nOutput ONLY the JSON array:";
-  }
-  if(pl==="tv_shows"){
-    var m2={all_tv:"ALL: reality TV, soap operas, drama series, upcoming premieres, cast news",reality:"REALITY TV shows (dating, competition, talent, lifestyle)",soap:"SOAP OPERAS and long-running daily/weekly dramas",series:"TV SERIES returning with new seasons",upcoming:"UPCOMING TV premieres in the next 1-4 weeks",cast_news:"CAST NEWS: actors joining/leaving, behind-scenes drama"};
-    return base+"\n\nSearch and find TOP 8 most recent TV show news in "+co.n+" about: "+(m2[sc]||m2.all_tv)+". Prioritize Reality TV, soap operas, shows with active fan communities.\n\nEach JSON object must have:\n- \"title\": headline in "+co.l+", max 15 words\n- \"description\": 2-3 sentences in "+co.l+" with show name, network, dates\n- \"heat\": number 1-100\n- \"type\": one of \"breaking\", \"rising\", \"hot\", \"new\"\n- \"show_name\": official show name\n- \"network\": network or platform\n- \"show_type\": one of \"reality\", \"soap\", \"drama_series\", \"comedy\", \"competition\", \"documentary\"\n- \"source_url\": real URL\n- \"source_name\": source name\n- \"hook\": Facebook post first line in "+co.l+", max 20 words\n- \"fb_format\": one of \"reel\", \"carousel\", \"discussion\", \"link_post\"\n- \"air_date\": when it airs or \"TBA\"\n\nOutput ONLY the JSON array:";
-  }
+  if(pl==="celebs"){var m={all:"ALL celebrity life events: marriages, divorces, pregnancies, dating, scandals",marriage:"MARRIAGES and ENGAGEMENTS",divorce:"DIVORCES and BREAKUPS",baby:"PREGNANCIES and BIRTHS",scandal:"SCANDALS and controversies",dating:"NEW RELATIONSHIPS and dating rumors"};return base+"\n\nSearch and find TOP 8 most recent celebrity news in "+co.n+" about: "+(m[sc]||m.all)+".\n\nEach JSON object must have:\n- \"title\": headline in "+co.l+", max 15 words\n- \"description\": 2-3 detailed sentences in "+co.l+"\n- \"heat\": number 1-100 (viral potential)\n- \"type\": one of \"breaking\", \"rising\", \"hot\", \"new\"\n- \"celeb_names\": array of celebrity names\n- \"event_type\": one of \"marriage\", \"divorce\", \"baby\", \"scandal\", \"dating\", \"other\"\n- \"source_url\": real URL of the news article\n- \"source_name\": name of the source\n- \"hook\": Facebook post first line in "+co.l+", max 20 words, emotional\n- \"fb_format\": one of \"reel\", \"carousel\", \"discussion\", \"photo\"\n\nOutput ONLY the JSON array:"}
+  if(pl==="ai_stories"){return base+"\n\nSearch for currently viral heartwarming/emotional stories, then generate 8 ORIGINAL story concepts for European Facebook audiences (UK, Germany, France, Italy, Spain, Netherlands, Sweden).\n\nStory types: rescued animal saves owner, elderly kindness, child changes community, lost pet reunion, unlikely friendships, stranger pays it forward, old couple love story.\n\nEach JSON object must have:\n- \"title\": story headline in English, max 15 words\n- \"description\": 3-4 sentence story outline in English\n- \"heat\": number 1-100\n- \"type\": one of \"heartwarming\", \"inspiring\", \"emotional\", \"surprising\", \"reunion\"\n- \"visual_prompt\": 1 sentence for AI cover image\n- \"target_emotion\": one of \"tears\", \"joy\", \"hope\", \"shock\", \"nostalgia\", \"pride\"\n- \"inspired_by\": what real trend inspired this\n- \"inspired_url\": URL of the real viral story if found, or \"\"\n- \"hook\": Facebook caption in English, max 20 words\n- \"fb_format\": one of \"carousel\", \"reel\", \"photo\"\n- \"best_countries\": array of 3-5 EU country codes\n\nOutput ONLY the JSON array:"}
+  if(pl==="tv_shows"){var m2={all_tv:"ALL: reality TV, soap operas, drama series, upcoming premieres, cast news",reality:"REALITY TV shows (dating, competition, talent, lifestyle)",soap:"SOAP OPERAS and long-running daily/weekly dramas",series:"TV SERIES returning with new seasons",upcoming:"UPCOMING TV premieres in the next 1-4 weeks",cast_news:"CAST NEWS: actors joining/leaving, behind-scenes drama"};return base+"\n\nSearch and find TOP 8 most recent TV show news in "+co.n+" about: "+(m2[sc]||m2.all_tv)+". Prioritize Reality TV, soap operas, shows with active fan communities.\n\nEach JSON object must have:\n- \"title\": headline in "+co.l+", max 15 words\n- \"description\": 2-3 sentences in "+co.l+" with show name, network, dates\n- \"heat\": number 1-100\n- \"type\": one of \"breaking\", \"rising\", \"hot\", \"new\"\n- \"show_name\": official show name\n- \"network\": network or platform\n- \"show_type\": one of \"reality\", \"soap\", \"drama_series\", \"comedy\", \"competition\", \"documentary\"\n- \"source_url\": real URL\n- \"source_name\": source name\n- \"hook\": Facebook post first line in "+co.l+", max 20 words\n- \"fb_format\": one of \"reel\", \"carousel\", \"discussion\", \"link_post\"\n- \"air_date\": when it airs or \"TBA\"\n\nOutput ONLY the JSON array:"}
   return base;
 }
 
@@ -140,146 +127,58 @@ function extractJSON(t){
   return null;
 }
 
-function copyText(text,btnId){
-  navigator.clipboard.writeText(text).then(function(){
-    var el=document.getElementById(btnId);
-    if(el){el.textContent="\u2713";el.style.color="#34c759";setTimeout(function(){el.textContent="Copy";el.style.color=""},1500)}
-  });
-}
+function copyText(text,btnId){navigator.clipboard.writeText(text).then(function(){var el=document.getElementById(btnId);if(el){el.textContent="\u2713";el.style.color="#34c759";setTimeout(function(){el.textContent="Copy";el.style.color=""},1500)}})}
 function setPillar(id){S.pl=id;S.sc=(id==="celebs"?"all":id==="tv_shows"?"all_tv":"");S.res=[];S.srch=false;S.err=null;render()}
 function setCountry(i){S.ci=i;S.co=false;render()}
 function setSub(id){S.sc=id;render()}
 function toggleDD(){S.co=!S.co;render()}
 
 async function doSearch(){
+  if(!API_KEY||API_KEY.indexOf("DAN-KEY")>=0){S.err="Ch\u01B0a d\u00E1n API key. M\u1EDF file HTML \u2192 s\u1EEDa d\u00F2ng API_KEY \u1EDF \u0111\u1EA7u file.";S.srch=true;render();return}
   S.ld=true;S.err=null;S.res=[];S.srch=true;S.el=0;S.cost=null;render();
   tmr=setInterval(function(){S.el+=0.5;render()},500);
-
   try{
-    var res=await fetch(WORKER_URL,{
+    var res=await fetch(USE_WORKER,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-haiku-4-5-20251001",
-        max_tokens:3000,
-        system:"You are a JSON API for content research. Output ONLY valid JSON arrays. Never output explanations, apologies, or markdown. Always provide results.",
-        tools:[{type:"web_search_20250305",name:"web_search"}],
-        messages:[{role:"user",content:buildPrompt(gc(),S.pl,S.sc)}]
-      })
+      body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:3000,system:"You are a JSON API for content research. Output ONLY valid JSON arrays. Never output explanations, apologies, or markdown. Always provide results.",tools:[{type:"web_search_20250305",name:"web_search"}],messages:[{role:"user",content:buildPrompt(gc(),S.pl,S.sc)}]})
     });
     var data=await res.json();
     if(data.error)throw new Error(data.error.message||JSON.stringify(data.error));
-
     var fullText=(data.content||[]).filter(function(b){return b.type==="text"}).map(function(b){return b.text}).join("\n");
     var parsed=extractJSON(fullText);
     if(Array.isArray(parsed)&&parsed.length>0){S.res=parsed.slice(0,8)}
-    else{S.err="Kh\u00F4ng parse \u0111\u01B0\u1EE3c k\u1EBFt qu\u1EA3. B\u1EA5m Th\u1EED l\u1EA1i."}
-
-    var u=data.usage||{};
-    var cost=((u.input_tokens||0)*0.0008/1000)+((u.output_tokens||0)*0.004/1000);
-    S.cost=cost.toFixed(4);
-  }catch(e){
-    S.err=e.message||"L\u1ED7i k\u1EBFt n\u1ED1i";
-  }finally{
-    S.ld=false;clearInterval(tmr);render();
-  }
+    else{S.err="Kh\u00F4ng parse \u0111\u01B0\u1EE3c. Th\u1EED l\u1EA1i."}
+    var u=data.usage||{};S.cost=((u.input_tokens||0)*0.0008/1000+(u.output_tokens||0)*0.004/1000).toFixed(4);
+  }catch(e){S.err=e.message||"L\u1ED7i"}
+  finally{S.ld=false;clearInterval(tmr);render()}
 }
 
 function render(){
-  var p=gp(),co=gc(),subs=gs(),showC=S.pl!=="ai_stories";
-  var h="";
-
-  h+='<header class="hd">';
-  h+='<div class="badge" style="background:'+p.color+'18;border:1px solid '+p.color+'33;color:'+p.color+'">● Deep Search \u00B7 Facebook Content</div>';
-  h+='<h1>Content Research Hub</h1>';
-  h+='<p>Claude AI + Web Search</p>';
-  h+='</header>';
-
+  var p=gp(),co=gc(),subs=gs(),showC=S.pl!=="ai_stories",h="";
+  h+='<header class="hd"><div class="badge" style="background:'+p.color+'18;border:1px solid '+p.color+'33;color:'+p.color+'">● Deep Search \u00B7 Facebook Content</div><h1>Content Research Hub</h1><p>Claude AI + Web Search</p></header>';
   h+='<div class="pls">';
-  for(var i=0;i<PILLARS.length;i++){
-    var x=PILLARS[i],on=S.pl===x.id;
-    h+='<button class="pl'+(on?" on":"")+'" style="'+(on?"background:"+x.color+"20;border-color:"+x.color+"40":"")+'" onclick="setPillar(\''+x.id+'\')">';
-    h+='<span style="font-size:18px">'+x.icon+'</span>';
-    h+='<div><div>'+x.label+'</div><div style="font-size:9px;opacity:.5;font-family:monospace">'+x.desc+'</div></div>';
-    h+='</button>';
-  }
+  for(var i=0;i<PILLARS.length;i++){var x=PILLARS[i],on=S.pl===x.id;h+='<button class="pl'+(on?" on":"")+'" style="'+(on?"background:"+x.color+"20;border-color:"+x.color+"40":"")+'" onclick="setPillar(\''+x.id+'\')"><span style="font-size:18px">'+x.icon+'</span><div><div>'+x.label+'</div><div style="font-size:9px;opacity:.5;font-family:monospace">'+x.desc+'</div></div></button>'}
   h+='</div>';
-
-  if(showC){
-    h+='<div class="cw"><button class="cbtn" onclick="toggleDD()"><span>'+co.f+' '+co.n+'</span><span style="font-size:9px;opacity:.4">\u25BC</span></button>';
-    if(S.co){
-      h+='<div class="cdd">';
-      for(var j=0;j<C.length;j++){
-        var c=C[j];
-        h+='<button class="ci'+(j===S.ci?" on":"")+'" onclick="setCountry('+j+')"><span style="font-size:16px">'+c.f+'</span>'+c.n;
-        if(ET.indexOf(c.c)>=0)h+='<span style="font-size:8px;color:#34c759;font-family:monospace;margin-left:auto">EU T1</span>';
-        h+='</button>';
-      }
-      h+='</div>';
-    }
-    h+='</div>';
-  }
-
-  if(subs){
-    h+='<div class="scs">';
-    for(var k=0;k<subs.length;k++){
-      var s=subs[k],son=S.sc===s.id;
-      h+='<button class="sc'+(son?" on":"")+'" style="'+(son?"background:"+p.color+"20;border-color:"+p.color+"35":"")+'" onclick="setSub(\''+s.id+'\')">';
-      h+='<span style="font-size:13px">'+s.i+'</span> '+s.l+'</button>';
-    }
-    h+='</div>';
-  }
-
-  h+='<div class="sw"><button class="go" '+(S.ld?"disabled":"")+' style="background:'+(S.ld?"rgba(255,255,255,.05)":"linear-gradient(135deg,"+p.color+","+p.color+"cc)")+';box-shadow:'+(S.ld?"none":"0 4px 20px "+p.color+"40")+'" onclick="doSearch()">';
-  h+=(S.ld?"\u0110ang t\u00ECm ki\u1EBFm...":"\uD83D\uDD0D T\u00ECm "+p.label)+'</button></div>';
-
-  if(S.ld){
-    var est=45,pct=Math.min((S.el/est)*100,96);
-    var steps=["Kh\u1EDFi t\u1EA1o AI...","T\u00ECm ki\u1EBFm web...","\u0110\u1ECDc nhi\u1EC1u ngu\u1ED3n...","Ph\u00E2n t\u00EDch & x\u1EBFp h\u1EA1ng...","T\u1EA1o k\u1EBFt qu\u1EA3..."];
-    var si=Math.min(Math.floor((S.el/est)*steps.length),steps.length-1);
-    h+='<div class="ld"><div class="lb"><div class="lf" style="width:'+pct+'%;background:linear-gradient(90deg,#cc785c,#ff9500)"></div></div>';
-    h+='<p style="color:rgba(255,255,255,.6)">'+steps[si]+'</p>';
-    h+='<p style="color:rgba(255,255,255,.25);font-size:11px;font-family:monospace;margin-top:4px">'+Math.round(S.el)+'s / ~'+est+'s \uD83D\uDD0D</p></div>';
-  }
-
-  if(S.err){
-    h+='<div class="eb"><p>\u26A0\uFE0F '+S.err+'</p><button class="rb" onclick="doSearch()">\uD83D\uDD04 Th\u1EED l\u1EA1i</button></div>';
-  }
-
+  if(showC){h+='<div class="cw"><button class="cbtn" onclick="toggleDD()"><span>'+co.f+' '+co.n+'</span><span style="font-size:9px;opacity:.4">\u25BC</span></button>';if(S.co){h+='<div class="cdd">';for(var j=0;j<C.length;j++){var c=C[j];h+='<button class="ci'+(j===S.ci?" on":"")+'" onclick="setCountry('+j+')"><span style="font-size:16px">'+c.f+'</span>'+c.n+(ET.indexOf(c.c)>=0?'<span style="font-size:8px;color:#34c759;font-family:monospace;margin-left:auto">EU T1</span>':'')+'</button>'}h+='</div>'}h+='</div>'}
+  if(subs){h+='<div class="scs">';for(var k=0;k<subs.length;k++){var s=subs[k],son=S.sc===s.id;h+='<button class="sc'+(son?" on":"")+'" style="'+(son?"background:"+p.color+"20;border-color:"+p.color+"35":"")+'" onclick="setSub(\''+s.id+'\')"><span style="font-size:13px">'+s.i+'</span> '+s.l+'</button>'}h+='</div>'}
+  h+='<div class="sw"><button class="go" '+(S.ld?"disabled":"")+' style="background:'+(S.ld?"rgba(255,255,255,.05)":"linear-gradient(135deg,"+p.color+","+p.color+"cc)")+';box-shadow:'+(S.ld?"none":"0 4px 20px "+p.color+"40")+'" onclick="doSearch()">'+(S.ld?"\u0110ang t\u00ECm ki\u1EBFm...":"\uD83D\uDD0D T\u00ECm "+p.label)+'</button></div>';
+  if(S.ld){var est=45,pct=Math.min((S.el/est)*100,96),steps=["Kh\u1EDFi t\u1EA1o AI...","T\u00ECm ki\u1EBFm web...","\u0110\u1ECDc nhi\u1EC1u ngu\u1ED3n...","Ph\u00E2n t\u00EDch...","T\u1EA1o k\u1EBFt qu\u1EA3..."],si=Math.min(Math.floor((S.el/est)*steps.length),steps.length-1);h+='<div class="ld"><div class="lb"><div class="lf" style="width:'+pct+'%;background:linear-gradient(90deg,#cc785c,#ff9500)"></div></div><p style="color:rgba(255,255,255,.6)">'+steps[si]+'</p><p style="color:rgba(255,255,255,.25);font-size:11px;font-family:monospace;margin-top:4px">'+Math.round(S.el)+'s / ~'+est+'s \uD83D\uDD0D</p></div>'}
+  if(S.err){h+='<div class="eb"><p>\u26A0\uFE0F '+S.err+'</p><button class="rb" onclick="doSearch()">\uD83D\uDD04 Th\u1EED l\u1EA1i</button></div>'}
   if(!S.ld&&S.res.length>0){
-    h+='<div class="rh">';
-    if(showC)h+='<span style="font-size:22px">'+co.f+'</span>';
-    h+='<span style="font-size:20px">'+p.icon+'</span><div><h2>'+(showC?co.n:"EU Tier 1-2")+' \u00B7 '+p.label+'</h2>';
-    h+='<div style="font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">'+S.res.length+' k\u1EBFt qu\u1EA3 \u00B7 Claude Haiku'+(S.cost?' \u00B7 $'+S.cost:'')+'</div></div></div>';
-    h+='<div class="grid">';
-
-    for(var ri=0;ri<S.res.length;ri++){
-      var it=S.res[ri];
+    h+='<div class="rh">';if(showC)h+='<span style="font-size:22px">'+co.f+'</span>';
+    h+='<span style="font-size:20px">'+p.icon+'</span><div><h2>'+(showC?co.n:"EU Tier 1-2")+' \u00B7 '+p.label+'</h2><div style="font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">'+S.res.length+' k\u1EBFt qu\u1EA3'+(S.cost?' \u00B7 $'+S.cost:'')+'</div></div></div><div class="grid">';
+    for(var ri=0;ri<S.res.length;ri++){var it=S.res[ri];
       h+='<div class="card" style="animation-delay:'+ri*0.06+'s;border-color:'+p.color+'18">';
-      h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:6px">';
-      h+='<div style="display:flex;align-items:center;gap:8px">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:6px"><div style="display:flex;align-items:center;gap:8px">';
       h+='<span style="font-size:18px;font-weight:900;color:rgba(255,255,255,.1);font-family:monospace">'+String(ri+1).padStart(2,"0")+'</span>';
-
-      if(S.pl==="celebs"){
-        var ec={marriage:"#34c759",divorce:"#ff6b6b",baby:"#ffb800",scandal:"#ff2d55",dating:"#ff69b4",other:"#888"};
-        var el2={marriage:"\uD83D\uDC92 K\u1EBET H\u00D4N",divorce:"\uD83D\uDC94 LY H\u00D4N",baby:"\uD83D\uDC76 SINH CON",scandal:"\uD83D\uDE31 SCANDAL",dating:"\u2764\uFE0F H\u1EB8N H\u00D2",other:"\uD83D\uDCF0 TIN"};
-        var et=it.event_type||"other";
-        h+='<span class="tag" style="background:'+(ec[et]||"#888")+'">'+(el2[et]||el2.other)+'</span>';
-      }else if(S.pl==="tv_shows"){
-        var tc2={breaking:"#ff2d55","new":"#5856d6",rising:"#ff9500",hot:"#ff6b35"};
-        h+='<span class="tag" style="background:'+(tc2[it.type]||"#ff9500")+'">'+((it.type||"hot").toUpperCase())+'</span>';
-        if(it.show_type)h+='<span class="tag" style="background:rgba(255,255,255,.15)">'+it.show_type.replace("_"," ")+'</span>';
-      }else{
-        var ti2={heartwarming:"\uD83D\uDC96",inspiring:"\uD83C\uDF1F",emotional:"\uD83D\uDE22",surprising:"\uD83D\uDE32",reunion:"\uD83E\uDD1D"};
-        h+='<span style="font-size:16px">'+(ti2[it.type]||"\u2728")+'</span>';
-        h+='<span class="tag" style="background:#af52de">'+(it.type||"story")+'</span>';
-        if(it.target_emotion)h+='<span class="tag" style="background:rgba(255,255,255,.15)">\uD83C\uDFAD '+it.target_emotion+'</span>';
-      }
+      if(S.pl==="celebs"){var ec={marriage:"#34c759",divorce:"#ff6b6b",baby:"#ffb800",scandal:"#ff2d55",dating:"#ff69b4",other:"#888"},el2={marriage:"\uD83D\uDC92 K\u1EBET H\u00D4N",divorce:"\uD83D\uDC94 LY H\u00D4N",baby:"\uD83D\uDC76 SINH CON",scandal:"\uD83D\uDE31 SCANDAL",dating:"\u2764\uFE0F H\u1EB8N H\u00D2",other:"\uD83D\uDCF0 TIN"},et=it.event_type||"other";h+='<span class="tag" style="background:'+(ec[et]||"#888")+'">'+(el2[et]||el2.other)+'</span>'}
+      else if(S.pl==="tv_shows"){h+='<span class="tag" style="background:'+({breaking:"#ff2d55","new":"#5856d6",rising:"#ff9500",hot:"#ff6b35"}[it.type]||"#ff9500")+'">'+((it.type||"hot").toUpperCase())+'</span>';if(it.show_type)h+='<span class="tag" style="background:rgba(255,255,255,.15)">'+it.show_type.replace("_"," ")+'</span>'}
+      else{h+='<span style="font-size:16px">'+({heartwarming:"\uD83D\uDC96",inspiring:"\uD83C\uDF1F",emotional:"\uD83D\uDE22",surprising:"\uD83D\uDE32",reunion:"\uD83E\uDD1D"}[it.type]||"\u2728")+'</span><span class="tag" style="background:#af52de">'+(it.type||"story")+'</span>';if(it.target_emotion)h+='<span class="tag" style="background:rgba(255,255,255,.15)">\uD83C\uDFAD '+it.target_emotion+'</span>'}
       h+='</div>';
       if(it.network)h+='<span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;font-family:monospace">'+it.network+'</span>';
       if(it.fb_format)h+='<span class="tag" style="background:rgba(255,255,255,.1)">'+it.fb_format+'</span>';
       h+='</div>';
-
       if(it.celeb_names&&it.celeb_names.length){h+='<div style="margin-bottom:6px">';for(var cn=0;cn<it.celeb_names.length;cn++)h+='<span class="ctag">'+it.celeb_names[cn]+'</span>';h+='</div>'}
       if(it.show_name)h+='<div style="font-size:11px;font-weight:700;color:#ff9500;font-family:monospace;margin-bottom:4px">\uD83D\uDCFA '+it.show_name+'</div>';
       h+='<h3>'+(it.title||"")+'</h3><p>'+(it.description||"")+'</p>';
@@ -287,42 +186,20 @@ function render(){
       if(it.visual_prompt)h+='<div style="margin-top:8px;padding:6px 10px;background:rgba(175,82,222,.06);border-radius:8px;font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">\uD83C\uDFA8 '+it.visual_prompt+'</div>';
       if(it.best_countries&&it.best_countries.length){h+='<div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,.3)">\uD83C\uDF0D Best: ';for(var bc=0;bc<it.best_countries.length;bc++){var found=false;for(var fc=0;fc<C.length;fc++){if(C[fc].c===it.best_countries[bc]){h+=C[fc].f+" ";found=true;break}}if(!found)h+=it.best_countries[bc]+" "}h+='</div>'}
       if(it.inspired_by)h+='<div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">\uD83D\uDCA1 '+it.inspired_by+'</div>';
-
-      if(it.hook){
-        var hid="hook"+ri;
-        var safeHook=String(it.hook).replace(/\\/g,"\\\\").replace(/'/g,"\\'");
-        h+='<div class="hb">';
-        h+='<div style="font-size:8px;font-weight:700;color:#1877f2;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;font-family:monospace">HOOK</div>';
-        h+='<p style="font-size:12.5px;color:rgba(255,255,255,.75);font-style:italic;line-height:1.4;padding-right:46px">"'+it.hook+'"</p>';
-        h+='<button id="'+hid+'" onclick="copyText(\''+safeHook+'\',\''+hid+'\')" style="position:absolute;right:8px;top:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:3px 7px;font-size:10px;color:rgba(255,255,255,.4);cursor:pointer;font-family:monospace">Copy</button>';
-        h+='</div>';
-      }
-
-      var heat=it.heat||50;
-      var hc=heat>80?"#ff2d55":heat>60?"#ff6b35":heat>40?"#ffb800":"#34c759";
-      h+='<div style="margin-top:auto;padding-top:6px">';
-      h+='<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden"><div style="width:'+heat+'%;height:100%;background:linear-gradient(90deg,'+hc+'88,'+hc+');border-radius:2px"></div></div><span style="font-size:11px;font-weight:700;font-family:monospace;color:'+hc+'">'+heat+'\u00B0</span></div>';
-
-      var surl=it.source_url||it.inspired_url||"";
-      var sname=it.source_name||(it.inspired_url?"Trend g\u1ED1c":"");
-      if(surl&&surl.indexOf("http")===0){
-        h+='<a class="src" href="'+surl+'" target="_blank" rel="noopener">\uD83D\uDCC4 '+(sname||"Ngu\u1ED3n")+' \u2197</a>';
-      }
-      h+='</div></div>';
+      if(it.hook){var hid="hook"+ri,safeHook=String(it.hook).replace(/\\/g,"\\\\").replace(/'/g,"\\'");h+='<div class="hb"><div style="font-size:8px;font-weight:700;color:#1877f2;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;font-family:monospace">HOOK</div><p style="font-size:12.5px;color:rgba(255,255,255,.75);font-style:italic;line-height:1.4;padding-right:46px">"'+it.hook+'"</p><button id="'+hid+'" onclick="copyText(\''+safeHook+'\',\''+hid+'\')" style="position:absolute;right:8px;top:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:3px 7px;font-size:10px;color:rgba(255,255,255,.4);cursor:pointer;font-family:monospace">Copy</button></div>'}
+      var heat=it.heat||50,hc=heat>80?"#ff2d55":heat>60?"#ff6b35":heat>40?"#ffb800":"#34c759";
+      h+='<div style="margin-top:auto;padding-top:6px"><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden"><div style="width:'+heat+'%;height:100%;background:linear-gradient(90deg,'+hc+'88,'+hc+');border-radius:2px"></div></div><span style="font-size:11px;font-weight:700;font-family:monospace;color:'+hc+'">'+heat+'\u00B0</span></div>';
+      var surl=it.source_url||it.inspired_url||"",sname=it.source_name||(it.inspired_url?"Trend g\u1ED1c":"");
+      if(surl&&surl.indexOf("http")===0){h+='<a class="src" href="'+surl+'" target="_blank" rel="noopener">\uD83D\uDCC4 '+(sname||"Ngu\u1ED3n")+' \u2197</a>'}
+      h+='</div></div>'
     }
-    h+='</div>';
+    h+='</div>'
   }
-
   if(!S.ld&&!S.err&&S.srch&&S.res.length===0)h+='<div class="empty">Kh\u00F4ng t\u00ECm th\u1EA5y. Th\u1EED l\u1EA1i.</div>';
-  if(!S.srch&&!S.ld){
-    h+='<div class="empty"><div style="font-size:48px;margin-bottom:14px">'+p.icon+'</div>';
-    h+='<p style="font-size:14px">'+(S.pl==="ai_stories"?"B\u1EA5m t\u00ECm \u0111\u1EC3 AI g\u1EE3i \u00FD c\u00E2u chuy\u1EC7n viral":"Ch\u1ECDn qu\u1ED1c gia \u2192 danh m\u1EE5c \u2192 b\u1EA5m T\u00ECm")+'</p>';
-    h+='<p style="font-size:11px;font-family:monospace;margin-top:4px">Claude AI + Web Search \u00B7 ~30-45s</p></div>';
-  }
+  if(!S.srch&&!S.ld){h+='<div class="empty"><div style="font-size:48px;margin-bottom:14px">'+p.icon+'</div><p style="font-size:14px">'+(S.pl==="ai_stories"?"B\u1EA5m t\u00ECm \u0111\u1EC3 AI g\u1EE3i \u00FD c\u00E2u chuy\u1EC7n viral":"Ch\u1ECDn qu\u1ED1c gia \u2192 danh m\u1EE5c \u2192 b\u1EA5m T\u00ECm")+'</p><p style="font-size:11px;font-family:monospace;margin-top:4px">Claude AI + Web Search \u00B7 ~30-45s</p></div>'}
   h+='<footer><p>Content Research Hub \u00B7 Claude AI + Web Search</p></footer>';
-  document.getElementById("app").innerHTML=h;
+  document.getElementById("app").innerHTML=h
 }
-
 document.addEventListener("click",function(e){if(S.co&&!e.target.closest(".cw")){S.co=false;render()}});
 render();
 </script>
