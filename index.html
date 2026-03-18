@@ -14,40 +14,23 @@
 .badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-family:monospace;margin-bottom:12px}
 .hd h1{font-size:clamp(26px,5vw,40px);font-weight:900;font-family:'Playfair Display',Georgia,serif;background:linear-gradient(135deg,#fff,rgba(255,255,255,.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:4px}
 .hd p{color:var(--tm);font-size:11px;font-family:monospace}
-/* API Key */
-.api-box{text-align:center;margin-bottom:20px}
-.api-toggle{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:8px;padding:6px 14px;color:var(--td);font-size:11px;cursor:pointer;font-family:monospace;transition:all .2s}
-.api-toggle:hover{background:rgba(255,255,255,.08)}
-.api-row{margin-top:8px;display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
-.api-in{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;color:var(--t);font-size:12px;font-family:monospace;width:340px;outline:none}
-.api-in:focus{border-color:rgba(255,255,255,.25)}
-.api-save{background:rgba(52,199,89,.15);border:1px solid rgba(52,199,89,.3);border-radius:8px;padding:8px 16px;color:#34c759;font-size:12px;font-weight:700;cursor:pointer}
-.api-ok{font-size:10px;color:#34c759;margin-top:4px;font-family:monospace}
-.api-cost{font-size:10px;color:var(--tm);margin-top:6px;font-family:monospace}
-.api-cost a{color:#4da3ff}
-/* Pillars */
 .pls{display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap}
 .pl{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;border:1px solid var(--bd);background:rgba(255,255,255,.03);color:var(--td);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
 .pl.on{color:#fff;font-weight:700}
-/* Country */
 .cw{display:flex;justify-content:center;margin-bottom:12px;position:relative}
 .cbtn{display:flex;align-items:center;gap:8px;padding:9px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--t);font-size:13px;font-weight:600;cursor:pointer;min-width:200px;justify-content:space-between}
 .cdd{position:absolute;top:100%;left:50%;transform:translateX(-50%);width:240px;background:#16161f;border:1px solid rgba(255,255,255,.1);border-radius:10px;max-height:320px;overflow-y:auto;z-index:100;box-shadow:0 16px 48px rgba(0,0,0,.6);margin-top:4px}
 .ci{display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;background:transparent;border:none;color:var(--t);font-size:12px;cursor:pointer;text-align:left}
 .ci:hover{background:rgba(255,255,255,.05)}.ci.on{background:rgba(255,255,255,.08)}
-/* Subcats */
 .scs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px}
 .sc{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1px solid var(--bd);background:rgba(255,255,255,.03);color:var(--td);font-size:12px;cursor:pointer;transition:all .2s}
 .sc.on{color:#fff;font-weight:700}
-/* Button */
 .sw{display:flex;justify-content:center;margin-bottom:30px}
 .go{padding:13px 40px;border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px}
 .go:disabled{opacity:.4;cursor:not-allowed}
-/* Loading */
 .ld{padding:50px 0;text-align:center}
 .lb{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto}
 .lf{height:100%;border-radius:2px;transition:width .5s ease}
-/* Results */
 .rh{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06)}
 .rh h2{font-size:16px;font-weight:700;font-family:'Playfair Display',serif}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}
@@ -73,9 +56,11 @@ footer p{font-size:10px;color:rgba(255,255,255,.12);font-family:monospace}
 <body>
 <div class="ct" id="app"></div>
 <script>
-/* ══════════════════════════════════════════
-   DATA
-   ══════════════════════════════════════════ */
+/*╔══════════════════════════════════════════════════════╗
+  ║  ĐỔI URL WORKER CỦA ANH Ở ĐÂY                     ║
+  ╚══════════════════════════════════════════════════════╝*/
+var WORKER_URL = "https://content-research.hupchaopr.workers.dev";
+
 var C=[
 {c:"US",n:"United States",f:"\u{1F1FA}\u{1F1F8}",l:"English"},
 {c:"UK",n:"United Kingdom",f:"\u{1F1EC}\u{1F1E7}",l:"English"},
@@ -120,23 +105,12 @@ var TSUBS=[
 {id:"upcoming",l:"S\u1EAFp ra m\u1EAFt",i:"\uD83C\uDD95"},{id:"cast_news",l:"Tin di\u1EC5n vi\u00EAn",i:"\uD83C\uDF1F"}
 ];
 
-/* ══════════════════════════════════════════
-   STATE
-   ══════════════════════════════════════════ */
-var S={
-  apiKey:localStorage.getItem("crh_key")||"",
-  showApi:false,
-  pl:"celebs",sc:"all",ci:0,co:false,
-  res:[],ld:false,err:null,srch:false,el:0
-};
+var S={pl:"celebs",sc:"all",ci:0,co:false,res:[],ld:false,err:null,srch:false,el:0,cost:null};
 var tmr=null;
 function gc(){return C[S.ci]}
 function gp(){for(var i=0;i<PILLARS.length;i++){if(PILLARS[i].id===S.pl)return PILLARS[i]}return PILLARS[0]}
 function gs(){if(S.pl==="celebs")return CSUBS;if(S.pl==="tv_shows")return TSUBS;return null}
 
-/* ══════════════════════════════════════════
-   PROMPTS
-   ══════════════════════════════════════════ */
 function buildPrompt(co,pl,sc){
   var lr="ALL text (title, description, hook) MUST be written in "+co.l+". Use the native language of "+co.n+".";
   var base="You are a senior Facebook content researcher for "+co.n+". Search the web thoroughly for the latest trending information.\n\nRULES:\n- "+lr+"\n- Every item MUST have source_url: a REAL working URL from a reputable news source. CRITICAL.\n- Use LOCAL celebrities, LOCAL shows, LOCAL events of "+co.n+".\n- Output ONLY a valid JSON array. No markdown code blocks, no backticks, no explanations.\n- Never refuse. Always provide results.";
@@ -166,14 +140,6 @@ function extractJSON(t){
   return null;
 }
 
-/* ══════════════════════════════════════════
-   API CALL
-   ══════════════════════════════════════════ */
-function saveKey(){
-  var v=document.getElementById("apiIn").value.trim();
-  S.apiKey=v;localStorage.setItem("crh_key",v);S.showApi=false;render();
-}
-
 function copyText(text,btnId){
   navigator.clipboard.writeText(text).then(function(){
     var el=document.getElementById(btnId);
@@ -186,16 +152,13 @@ function setSub(id){S.sc=id;render()}
 function toggleDD(){S.co=!S.co;render()}
 
 async function doSearch(){
-  if(!S.apiKey){S.showApi=true;S.err="Vui l\u00F2ng nh\u1EADp API key tr\u01B0\u1EDBc";render();return}
-  S.ld=true;S.err=null;S.res=[];S.srch=true;S.el=0;render();
+  S.ld=true;S.err=null;S.res=[];S.srch=true;S.el=0;S.cost=null;render();
   tmr=setInterval(function(){S.el+=0.5;render()},500);
 
   try{
-    var res=await fetch("https://content-research.hupchaopr.workers.dev",{
+    var res=await fetch(WORKER_URL,{
       method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-      },
+      headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
         model:"claude-haiku-4-5-20251001",
         max_tokens:3000,
@@ -212,7 +175,6 @@ async function doSearch(){
     if(Array.isArray(parsed)&&parsed.length>0){S.res=parsed.slice(0,8)}
     else{S.err="Kh\u00F4ng parse \u0111\u01B0\u1EE3c k\u1EBFt qu\u1EA3. B\u1EA5m Th\u1EED l\u1EA1i."}
 
-    // Token cost estimate
     var u=data.usage||{};
     var cost=((u.input_tokens||0)*0.0008/1000)+((u.output_tokens||0)*0.004/1000);
     S.cost=cost.toFixed(4);
@@ -223,35 +185,16 @@ async function doSearch(){
   }
 }
 
-/* ══════════════════════════════════════════
-   RENDER
-   ══════════════════════════════════════════ */
 function render(){
   var p=gp(),co=gc(),subs=gs(),showC=S.pl!=="ai_stories";
   var h="";
 
-  // Header
   h+='<header class="hd">';
   h+='<div class="badge" style="background:'+p.color+'18;border:1px solid '+p.color+'33;color:'+p.color+'">● Deep Search \u00B7 Facebook Content</div>';
   h+='<h1>Content Research Hub</h1>';
-  h+='<p>Claude AI + Web Search \u00B7 Haiku ~$0.003/l\u1EA7n</p>';
+  h+='<p>Claude AI + Web Search</p>';
   h+='</header>';
 
-  // API Key
-  h+='<div class="api-box">';
-  if(S.apiKey&&!S.showApi){
-    h+='<button class="api-toggle" onclick="S.showApi=true;render()">\uD83D\uDD11 API Key: ****'+S.apiKey.slice(-6)+' \u00B7 \u0110\u1ED5i key</button>';
-    h+='<div class="api-ok">\u2713 \u0110\u00E3 k\u1EBFt n\u1ED1i</div>';
-  }else{
-    h+='<button class="api-toggle" onclick="S.showApi=!S.showApi;render()">\uD83D\uDD11 '+(S.showApi?'\u1EA8n':'Nh\u1EADp')+' API Key Anthropic</button>';
-    if(S.showApi){
-      h+='<div class="api-row"><input class="api-in" type="password" placeholder="sk-ant-api03-..." value="'+S.apiKey+'" id="apiIn"><button class="api-save" onclick="saveKey()">L\u01B0u</button></div>';
-      h+='<div class="api-cost">\uD83D\uDCB0 ~$0.003-0.005/l\u1EA7n search \u00B7 L\u1EA5y key t\u1EA1i <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></div>';
-    }
-  }
-  h+='</div>';
-
-  // Pillars
   h+='<div class="pls">';
   for(var i=0;i<PILLARS.length;i++){
     var x=PILLARS[i],on=S.pl===x.id;
@@ -262,7 +205,6 @@ function render(){
   }
   h+='</div>';
 
-  // Country
   if(showC){
     h+='<div class="cw"><button class="cbtn" onclick="toggleDD()"><span>'+co.f+' '+co.n+'</span><span style="font-size:9px;opacity:.4">\u25BC</span></button>';
     if(S.co){
@@ -278,7 +220,6 @@ function render(){
     h+='</div>';
   }
 
-  // Subcats
   if(subs){
     h+='<div class="scs">';
     for(var k=0;k<subs.length;k++){
@@ -289,11 +230,9 @@ function render(){
     h+='</div>';
   }
 
-  // Search
   h+='<div class="sw"><button class="go" '+(S.ld?"disabled":"")+' style="background:'+(S.ld?"rgba(255,255,255,.05)":"linear-gradient(135deg,"+p.color+","+p.color+"cc)")+';box-shadow:'+(S.ld?"none":"0 4px 20px "+p.color+"40")+'" onclick="doSearch()">';
   h+=(S.ld?"\u0110ang t\u00ECm ki\u1EBFm...":"\uD83D\uDD0D T\u00ECm "+p.label)+'</button></div>';
 
-  // Loading
   if(S.ld){
     var est=45,pct=Math.min((S.el/est)*100,96);
     var steps=["Kh\u1EDFi t\u1EA1o AI...","T\u00ECm ki\u1EBFm web...","\u0110\u1ECDc nhi\u1EC1u ngu\u1ED3n...","Ph\u00E2n t\u00EDch & x\u1EBFp h\u1EA1ng...","T\u1EA1o k\u1EBFt qu\u1EA3..."];
@@ -303,17 +242,15 @@ function render(){
     h+='<p style="color:rgba(255,255,255,.25);font-size:11px;font-family:monospace;margin-top:4px">'+Math.round(S.el)+'s / ~'+est+'s \uD83D\uDD0D</p></div>';
   }
 
-  // Error
   if(S.err){
     h+='<div class="eb"><p>\u26A0\uFE0F '+S.err+'</p><button class="rb" onclick="doSearch()">\uD83D\uDD04 Th\u1EED l\u1EA1i</button></div>';
   }
 
-  // Results
   if(!S.ld&&S.res.length>0){
     h+='<div class="rh">';
     if(showC)h+='<span style="font-size:22px">'+co.f+'</span>';
     h+='<span style="font-size:20px">'+p.icon+'</span><div><h2>'+(showC?co.n:"EU Tier 1-2")+' \u00B7 '+p.label+'</h2>';
-    h+='<div style="font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">'+S.res.length+' k\u1EBFt qu\u1EA3 \u00B7 Claude Haiku'+(S.cost?' \u00B7 \uD83D\uDCB0 $'+S.cost:'')+'</div></div></div>';
+    h+='<div style="font-size:11px;color:rgba(255,255,255,.3);font-family:monospace">'+S.res.length+' k\u1EBFt qu\u1EA3 \u00B7 Claude Haiku'+(S.cost?' \u00B7 $'+S.cost:'')+'</div></div></div>';
     h+='<div class="grid">';
 
     for(var ri=0;ri<S.res.length;ri++){
@@ -380,7 +317,7 @@ function render(){
   if(!S.srch&&!S.ld){
     h+='<div class="empty"><div style="font-size:48px;margin-bottom:14px">'+p.icon+'</div>';
     h+='<p style="font-size:14px">'+(S.pl==="ai_stories"?"B\u1EA5m t\u00ECm \u0111\u1EC3 AI g\u1EE3i \u00FD c\u00E2u chuy\u1EC7n viral":"Ch\u1ECDn qu\u1ED1c gia \u2192 danh m\u1EE5c \u2192 b\u1EA5m T\u00ECm")+'</p>';
-    h+='<p style="font-size:11px;font-family:monospace;margin-top:4px">Claude Haiku + Web Search \u00B7 ~$0.003/l\u1EA7n \u00B7 ~30-45s</p></div>';
+    h+='<p style="font-size:11px;font-family:monospace;margin-top:4px">Claude AI + Web Search \u00B7 ~30-45s</p></div>';
   }
   h+='<footer><p>Content Research Hub \u00B7 Claude AI + Web Search</p></footer>';
   document.getElementById("app").innerHTML=h;
