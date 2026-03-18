@@ -191,13 +191,10 @@ async function doSearch(){
   tmr=setInterval(function(){S.el+=0.5;render()},500);
 
   try{
-    var res=await fetch("https://api.anthropic.com/v1/messages",{
+    var res=await fetch("https://content-research.hupchaopr.workers.dev",{
       method:"POST",
       headers:{
         "Content-Type":"application/json",
-        "x-api-key":S.apiKey,
-        "anthropic-version":"2023-06-01",
-        "anthropic-dangerous-direct-browser-access":"true"
       },
       body:JSON.stringify({
         model:"claude-haiku-4-5-20251001",
